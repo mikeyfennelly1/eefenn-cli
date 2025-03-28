@@ -1,4 +1,5 @@
 = eefenn-cli
+:toc:
 
 A command line tool to automate eefenn tasks.
 
