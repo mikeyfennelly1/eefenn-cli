@@ -74,7 +74,7 @@ func (sc *Subcommand) GetSubCommandJson() ([]byte, error) {
 // Create an entry in /usr/lib/eefenn-cli for the subcommand
 func (sc *Subcommand) CreateSubcommandDirTree() error {
 	// create the directory that contains dependencies and script for the command
-	subCommandDir := sc.GetAbsoluteSubcommandDirname()
+	subCommandDir := sc.GetSubcommandDependenciesDirectory()
 
 	err := os.MkdirAll(subCommandDir, 0755)
 	if err != nil {
@@ -104,6 +104,16 @@ func (sc *Subcommand) GetAbsoluteSubcommandDirname() string {
 	commandDirectory := fmt.Sprintf("%s/%s", EefennCLIDir, sc.Entry.Hash.String())
 
 	return commandDirectory
+}
+
+// GetSubcommandDependenciesDirectory
+//
+// Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
+func (sc *Subcommand) GetSubcommandDependenciesDirectory() string {
+	// create the string for the command ID
+	commandDependenciesDirectory := fmt.Sprintf("%s/%s.dependencies", EefennCLIDir, sc.Entry.Hash.String())
+
+	return commandDependenciesDirectory
 }
 
 func (sc *Subcommand) CreateEmptySubcommandShellFile() (*os.File, error) {
