@@ -20,6 +20,10 @@ func main() {
 	cmd.GreetCmd.Flags().StringP("name", "n", "World", "Name to greet")
 	rootCmd.AddCommand(cmd.GreetCmd)
 
+	rootCmd.AddCommand(cmd.TidyCmd)
+
+	rootCmd.AddCommand(cmd.InstallCmd)
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
