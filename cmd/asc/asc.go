@@ -69,6 +69,7 @@ func (sc *Subcommand) CreateSubCommandConfigEntry() error {
 }
 
 // GetSubCommandJson
+//
 // Get the JSON object for this command.
 func (sc *Subcommand) GetSubCommandJson() ([]byte, error) {
 	jsonData, err := json.MarshalIndent(sc, "", "  ")
@@ -140,28 +141,36 @@ func (sc *Subcommand) CreateEmptySubcommandShellFile(parentDir string) (*os.File
 	return file, nil
 }
 
-func (sc *Subcommand) MarshalJSON() ([]byte, error) {
-	// Create a map where the key is the name of the command
-	return json.Marshal(map[string]SubcommandEntry{
-		sc.Name: sc.Entry,
-	})
-}
-
+// UpdateConfigJSON
+//
+// Update /usr/lib/eefenn-cli/effen-cli.config.json with
+// marshalled subcommand data.
 func (sc *Subcommand) UpdateConfigJSON() error {
 	configJSON, err := os.ReadFile(ConfigJSONPath)
 	if err != nil {
 		return err
 	}
 
-	marsh, err := sc.MarshalJSON()
+	// Step 2: Unmarshal eefenn-cli.config.json into a map
+	var data map[string]interface{}
+	err = json.Unmarshal(configJSON, &data)
 	if err != nil {
 		return err
 	}
-	fmt.Printf(string(marsh))
 
-	// Step 2: Unmarshal JSON into a map
-	var data map[string]interface{}
-	err = json.Unmarshal(configJSON, &data)
+	data[sc.Name] = map[string]interface{}{
+		"description":  sc.Entry.Description,
+		"command-hash": sc.Entry.Hash.String(),
+		"script":       fmt.Sprintf("%s.sh", sc.Entry.Hash.String()),
+		"dependencies": sc.Entry.Dependencies,
+	}
+
+	updatedConfig, err := json.MarshalIndent(data, "", "	")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(ConfigJSONPath, updatedConfig, 0666)
 	if err != nil {
 		return err
 	}
