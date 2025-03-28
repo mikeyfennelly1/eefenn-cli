@@ -111,7 +111,7 @@ func (sc *Subcommand) GetAbsoluteSubcommandDirname() string {
 // Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
 func (sc *Subcommand) GetSubcommandDependenciesDirectory() string {
 	// create the string for the command ID
-	commandDependenciesDirectory := fmt.Sprintf("%s/%s.dependencies", EefennCLIDir, sc.Entry.Hash.String())
+	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIDir, sc.Entry.Hash.String(), sc.Entry.Hash.String())
 
 	return commandDependenciesDirectory
 }

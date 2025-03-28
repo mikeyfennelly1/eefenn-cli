@@ -42,6 +42,7 @@ You can customize this tool and add your own automation scripts. Each script wil
 After you have the basic install done, you can customize your tool by adding a subcommand via the `eefenn asc` command:
 
 [source, bash]
+----
 eefenn asc=my-command=./my-command-script.sh
 ----
 
