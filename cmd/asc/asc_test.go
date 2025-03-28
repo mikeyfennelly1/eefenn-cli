@@ -1,30 +1,29 @@
-package test
+package asc
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/cmd/asc"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 var testSubcommandDependencies = []string{"dep1.txt", "dep2.txt"}
-var testSubcommand = asc.CreateSubCommand("test", "test-script.sh", testSubcommandDependencies, "test command")
+var testSubcommand = createSubCommand("test", "test-script.sh", testSubcommandDependencies, "test command")
 
 func TestGetAbsoluteSubcommandDirname(t *testing.T) {
-	absoluteSubcommandDirname := testSubcommand.GetAbsoluteSubcommandDirname()
+	absoluteSubcommandDirname := testSubcommand.getAbsoluteSubcommandDirname()
 	fmt.Println(absoluteSubcommandDirname)
 }
 
 func TestCreateSubCommandConfigEntry(t *testing.T) {
-	_ = testSubcommand.CreateSubCommandConfigEntry()
+	_ = testSubcommand.createSubCommandConfigEntry()
 }
 
 func TestCreateSubcommandDirTree(t *testing.T) {
-	err := testSubcommand.CreateSubcommandDirTree()
+	err := testSubcommand.createSubcommandDirTree()
 	require.NoError(t, err)
 }
 
 func TestUpdateConfigJSON(t *testing.T) {
-	err := testSubcommand.UpdateConfigJSON()
+	err := testSubcommand.updateConfigJSON()
 	require.NoError(t, err)
 }

@@ -11,17 +11,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/spf13/cobra"
 	"os"
 )
 
-const EefennCLIDir = "/usr/lib/eefenn-cli"
-const ConfigJSONPath = EefennCLIDir + "/eefenn-cli.config.json"
+const eefennCLIDir = "/usr/lib/eefenn-cli"
+const configJSONPath = eefennCLIDir + "/eefenn-cli.config.json"
 
-type Subcommand struct {
-	Name  string          `json:"name"`
-	Entry SubcommandEntry `json:"entry"`
+var AscCommand = &cobra.Command{
+	Use:   "asc",
+	Short: "Add a subcommand to eefenn-cli",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("Adding subcommand...")
+	},
 }
-type SubcommandEntry struct {
+
+type subcommand struct {
+	Name  string          `json:"name"`
+	Entry subcommandEntry `json:"entry"`
+}
+type subcommandEntry struct {
 	// unique identifier for the command
 	Hash uuid.UUID `json:"command-hash"`
 
@@ -35,30 +44,46 @@ type SubcommandEntry struct {
 	Description string `json:"description,omitempty"`
 }
 
-// CreateSubCommand
+func AddSubCommand(name string, sourceScriptName string, dependencyPaths []string, description string) error {
+	subCommand := createSubCommand(name, sourceScriptName, dependencyPaths, description)
+
+	err := subCommand.createSubCommandConfigEntry()
+	if err != nil {
+		return err
+	}
+
+	err = subCommand.createSubcommandDirTree()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// createSubCommand
 //
 // Create a subcommand struct based on required command information
-func CreateSubCommand(name string, sourceScriptName string, dependencyPaths []string, description string) Subcommand {
+func createSubCommand(name string, sourceScriptName string, dependencyPaths []string, description string) subcommand {
 	UUID := uuid.New()
-	subCommandEntry := SubcommandEntry{
+	subCommandEntry := subcommandEntry{
 		Hash:         UUID,
 		SourceScript: sourceScriptName,
 		Dependencies: dependencyPaths,
 		Description:  description,
 	}
-	subCommand := Subcommand{
+	subCommand := subcommand{
 		Name:  name,
 		Entry: subCommandEntry,
 	}
 	return subCommand
 }
 
-// CreateSubCommandConfigEntry
+// createSubCommandConfigEntry
 //
 // Create a JSON object for this subcommand and update
 // eefenn-cli.config.json with that object.
-func (sc *Subcommand) CreateSubCommandConfigEntry() error {
-	commandJson, err := sc.GetSubCommandJson()
+func (sc *subcommand) createSubCommandConfigEntry() error {
+	commandJson, err := sc.getSubCommandJson()
 	if err != nil {
 		return err
 	}
@@ -68,33 +93,33 @@ func (sc *Subcommand) CreateSubCommandConfigEntry() error {
 	return nil
 }
 
-// GetSubCommandJson
+// getSubCommandJson
 //
 // Get the JSON object for this command.
-func (sc *Subcommand) GetSubCommandJson() ([]byte, error) {
+func (sc *subcommand) getSubCommandJson() ([]byte, error) {
 	jsonData, err := json.MarshalIndent(sc, "", "  ")
 	if err != nil {
-		return nil, fmt.Errorf("Error marshaling JSON:", err)
+		return nil, fmt.Errorf("Error marshaling JSON: %v\n", err)
 	}
 
 	return jsonData, nil
 }
 
-// CreateSubcommandDirTree
+// createSubcommandDirTree
 //
 // Create an entry in /usr/lib/eefenn-cli for the subcommand
-func (sc *Subcommand) CreateSubcommandDirTree() error {
+func (sc *subcommand) createSubcommandDirTree() error {
 	// create the directory that contains dependencies and script for the command
-	subCommandDependenciesDir := sc.GetSubcommandDependenciesDirectory()
+	subCommandDependenciesDir := sc.getSubcommandDependenciesDirectory()
 
 	err := os.MkdirAll(subCommandDependenciesDir, 0755)
 	if err != nil {
 		return fmt.Errorf("Could not create directory for this subcommand: %v\n", err)
 	}
 
-	subCommandDir := sc.GetAbsoluteSubcommandDirname()
+	subCommandDir := sc.getAbsoluteSubcommandDirname()
 	// create a blank command script
-	blankFile, err := sc.CreateEmptySubcommandShellFile(subCommandDir)
+	blankFile, err := sc.createEmptySubcommandShellFile(subCommandDir)
 	if err != nil {
 		return fmt.Errorf("Could not create empty subcommand .sh file\n")
 	}
@@ -108,27 +133,27 @@ func (sc *Subcommand) CreateSubcommandDirTree() error {
 	return nil
 }
 
-// GetAbsoluteSubcommandDirname
+// getAbsoluteSubcommandDirname
 //
 // get the absolute directory path for the subcommand directory.
-func (sc *Subcommand) GetAbsoluteSubcommandDirname() string {
+func (sc *subcommand) getAbsoluteSubcommandDirname() string {
 	// create the string for the command ID
-	commandDirectory := fmt.Sprintf("%s/%s", EefennCLIDir, sc.Entry.Hash.String())
+	commandDirectory := fmt.Sprintf("%s/%s", eefennCLIDir, sc.Entry.Hash.String())
 
 	return commandDirectory
 }
 
-// GetSubcommandDependenciesDirectory
+// getSubcommandDependenciesDirectory
 //
 // Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
-func (sc *Subcommand) GetSubcommandDependenciesDirectory() string {
+func (sc *subcommand) getSubcommandDependenciesDirectory() string {
 	// create the string for the command ID
-	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIDir, sc.Entry.Hash.String(), sc.Entry.Hash.String())
+	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", eefennCLIDir, sc.Entry.Hash.String(), sc.Entry.Hash.String())
 
 	return commandDependenciesDirectory
 }
 
-func (sc *Subcommand) CreateEmptySubcommandShellFile(parentDir string) (*os.File, error) {
+func (sc *subcommand) createEmptySubcommandShellFile(parentDir string) (*os.File, error) {
 	// create '<command-hash>.sh' filename string
 	fileName := fmt.Sprintf("%s/%s%s", parentDir, sc.Entry.Hash.String(), ".sh")
 
@@ -141,12 +166,12 @@ func (sc *Subcommand) CreateEmptySubcommandShellFile(parentDir string) (*os.File
 	return file, nil
 }
 
-// UpdateConfigJSON
+// updateConfigJSON
 //
 // Update /usr/lib/eefenn-cli/effen-cli.config.json with
 // marshalled subcommand data.
-func (sc *Subcommand) UpdateConfigJSON() error {
-	configJSON, err := os.ReadFile(ConfigJSONPath)
+func (sc *subcommand) updateConfigJSON() error {
+	configJSON, err := os.ReadFile(configJSONPath)
 	if err != nil {
 		return err
 	}
@@ -170,7 +195,7 @@ func (sc *Subcommand) UpdateConfigJSON() error {
 		return err
 	}
 
-	err = os.WriteFile(ConfigJSONPath, updatedConfig, 0666)
+	err = os.WriteFile(configJSONPath, updatedConfig, 0666)
 	if err != nil {
 		return err
 	}
