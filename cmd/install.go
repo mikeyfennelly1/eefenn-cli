@@ -16,14 +16,12 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
-	"os/exec"
 )
 
 const (
 	UsrLibEefenn        = "/usr/lib/eefenn"
 	EefennConfigJson    = "eefenn-cli.config.json"
 	UsrLibEefennScripts = EefennConfigJson + "/scripts"
-	RemoteRepoUrl       = ""
 )
 
 var InstallCmd = &cobra.Command{
@@ -79,7 +77,5 @@ func createScriptsDirectory() error {
 // initialize the eefenn-cli scripts directory as a git repo
 // add remote eefenn scripts repository as the remote for that repo
 func addRemoteToScriptsDir() error {
-	commandString := fmt.Sprintf("cd %s && git init && git branch -M main && git remote add %s")
-
-	cmd := exec.Command("bash", "-c")
+	return nil
 }

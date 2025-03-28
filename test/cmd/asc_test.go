@@ -23,3 +23,8 @@ func TestCreateSubcommandDirTree(t *testing.T) {
 	err := testSubcommand.CreateSubcommandDirTree()
 	require.NoError(t, err)
 }
+
+func TestUpdateConfigJSON(t *testing.T) {
+	err := testSubcommand.UpdateConfigJSON()
+	require.NoError(t, err)
+}

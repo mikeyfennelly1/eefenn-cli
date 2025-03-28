@@ -1,6 +1,9 @@
 // asc.go
 //
-// asc (add subcommand)
+// asc (add subcommand) is a method of customizing the command line tool
+// by updating the directory /usr/lib/eefenn-cli and eefenn-cli.config.json
+//
+// @author Mikey Fennelly
 
 package asc
 
@@ -12,6 +15,7 @@ import (
 )
 
 const EefennCLIDir = "/usr/lib/eefenn-cli"
+const ConfigJSONPath = EefennCLIDir + "/eefenn-cli.config.json"
 
 type Subcommand struct {
 	Name  string          `json:"name"`
@@ -49,6 +53,10 @@ func CreateSubCommand(name string, sourceScriptName string, dependencyPaths []st
 	return subCommand
 }
 
+// CreateSubCommandConfigEntry
+//
+// Create a JSON object for this subcommand and update
+// eefenn-cli.config.json with that object.
 func (sc *Subcommand) CreateSubCommandConfigEntry() error {
 	commandJson, err := sc.GetSubCommandJson()
 	if err != nil {
@@ -60,6 +68,8 @@ func (sc *Subcommand) CreateSubCommandConfigEntry() error {
 	return nil
 }
 
+// GetSubCommandJson
+// Get the JSON object for this command.
 func (sc *Subcommand) GetSubCommandJson() ([]byte, error) {
 	jsonData, err := json.MarshalIndent(sc, "", "  ")
 	if err != nil {
@@ -74,15 +84,16 @@ func (sc *Subcommand) GetSubCommandJson() ([]byte, error) {
 // Create an entry in /usr/lib/eefenn-cli for the subcommand
 func (sc *Subcommand) CreateSubcommandDirTree() error {
 	// create the directory that contains dependencies and script for the command
-	subCommandDir := sc.GetSubcommandDependenciesDirectory()
+	subCommandDependenciesDir := sc.GetSubcommandDependenciesDirectory()
 
-	err := os.MkdirAll(subCommandDir, 0755)
+	err := os.MkdirAll(subCommandDependenciesDir, 0755)
 	if err != nil {
 		return fmt.Errorf("Could not create directory for this subcommand: %v\n", err)
 	}
 
+	subCommandDir := sc.GetAbsoluteSubcommandDirname()
 	// create a blank command script
-	blankFile, err := sc.CreateEmptySubcommandShellFile()
+	blankFile, err := sc.CreateEmptySubcommandShellFile(subCommandDir)
 	if err != nil {
 		return fmt.Errorf("Could not create empty subcommand .sh file\n")
 	}
@@ -116,9 +127,9 @@ func (sc *Subcommand) GetSubcommandDependenciesDirectory() string {
 	return commandDependenciesDirectory
 }
 
-func (sc *Subcommand) CreateEmptySubcommandShellFile() (*os.File, error) {
+func (sc *Subcommand) CreateEmptySubcommandShellFile(parentDir string) (*os.File, error) {
 	// create '<command-hash>.sh' filename string
-	fileName := fmt.Sprintf("%s%s", sc.Entry.Hash.String(), ".sh")
+	fileName := fmt.Sprintf("%s/%s%s", parentDir, sc.Entry.Hash.String(), ".sh")
 
 	// create the file
 	file, err := os.Create(fileName)
@@ -127,4 +138,20 @@ func (sc *Subcommand) CreateEmptySubcommandShellFile() (*os.File, error) {
 	}
 
 	return file, nil
+}
+
+func (sc *Subcommand) UpdateConfigJSON() error {
+	configJSON, err := os.ReadFile(ConfigJSONPath)
+	if err != nil {
+		return err
+	}
+
+	// Step 2: Unmarshal JSON into a map
+	var data map[string]interface{}
+	err = json.Unmarshal(configJSON, &data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
