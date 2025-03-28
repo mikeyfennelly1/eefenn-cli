@@ -140,11 +140,24 @@ func (sc *Subcommand) CreateEmptySubcommandShellFile(parentDir string) (*os.File
 	return file, nil
 }
 
+func (sc *Subcommand) MarshalJSON() ([]byte, error) {
+	// Create a map where the key is the name of the command
+	return json.Marshal(map[string]SubcommandEntry{
+		sc.Name: sc.Entry,
+	})
+}
+
 func (sc *Subcommand) UpdateConfigJSON() error {
 	configJSON, err := os.ReadFile(ConfigJSONPath)
 	if err != nil {
 		return err
 	}
+
+	marsh, err := sc.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	fmt.Printf(string(marsh))
 
 	// Step 2: Unmarshal JSON into a map
 	var data map[string]interface{}
