@@ -1,11 +1,11 @@
-// asc.go
+// add_subcommand.go
 //
 // asc (add subcommand) is a method of customizing the command line tool
 // by updating the directory /usr/lib/eefenn-cli and eefenn-cli.config.json
 //
 // @author Mikey Fennelly
 
-package asc
+package add_subcommand
 
 import (
 	"encoding/json"
@@ -43,6 +43,9 @@ type subcommand struct {
 	Description string `json:"description,omitempty"`
 }
 
+// AddSubCommand
+//
+// Add a subcommand, and it's script to the user's CLI
 func AddSubCommand(name string, sourceScriptName string, dependencyPaths []string, description string) error {
 	subCommand := createSubCommand(name, sourceScriptName, dependencyPaths, description)
 
@@ -80,6 +83,11 @@ func createSubCommand(name string, sourceScriptName string, dependencyPaths []st
 // eefenn-cli.config.json with that object.
 func (sc *subcommand) createSubCommandConfigEntry() error {
 	commandJson, err := sc.getSubCommandJson()
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(configJSONPath, commandJson, 0666)
 	if err != nil {
 		return err
 	}
@@ -149,6 +157,9 @@ func (sc *subcommand) getSubcommandDependenciesDirectory() string {
 	return commandDependenciesDirectory
 }
 
+// createEmptySubcommandShellFile
+//
+// Create an empty shell file of the name <command-hash>.sh
 func (sc *subcommand) createEmptySubcommandShellFile(parentDir string) (*os.File, error) {
 	// create '<command-hash>.sh' filename string
 	fileName := fmt.Sprintf("%s/%s%s", parentDir, sc.Hash.String(), ".sh")

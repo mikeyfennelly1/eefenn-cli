@@ -1,4 +1,4 @@
-package asc
+package add_subcommand
 
 import (
 	"fmt"
