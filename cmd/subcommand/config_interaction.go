@@ -1,4 +1,4 @@
-package add_subcommand
+package subcommand
 
 import (
 	"encoding/json"

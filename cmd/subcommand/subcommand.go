@@ -1,11 +1,11 @@
-// add_subcommand.go
+// subcommand.go
 //
 // asc (add Subcommand) is a method of customizing the command line tool
 // by updating the directory /usr/lib/eefenn-cli and eefenn-cli.config.json
 //
 // @author Mikey Fennelly
 
-package add_subcommand
+package subcommand
 
 import (
 	"github.com/google/uuid"
@@ -38,6 +38,11 @@ func (sc *Subcommand) AddSubCommand() error {
 	}
 
 	err = sc.createSubcommandDirTree()
+	if err != nil {
+		return err
+	}
+
+	err = sc.copyShellFile()
 	if err != nil {
 		return err
 	}
