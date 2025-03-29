@@ -27,10 +27,9 @@ var AscCommand = &cobra.Command{
 }
 
 type subcommand struct {
-	Name  string          `json:"name"`
-	Entry subcommandEntry `json:"entry"`
-}
-type subcommandEntry struct {
+	// alias of the script
+	Name string `json:"name"`
+
 	// unique identifier for the command
 	Hash uuid.UUID `json:"command-hash"`
 
@@ -65,15 +64,12 @@ func AddSubCommand(name string, sourceScriptName string, dependencyPaths []strin
 // Create a subcommand struct based on required command information
 func createSubCommand(name string, sourceScriptName string, dependencyPaths []string, description string) subcommand {
 	UUID := uuid.New()
-	subCommandEntry := subcommandEntry{
+	subCommand := subcommand{
+		Name:         name,
 		Hash:         UUID,
 		SourceScript: sourceScriptName,
 		Dependencies: dependencyPaths,
 		Description:  description,
-	}
-	subCommand := subcommand{
-		Name:  name,
-		Entry: subCommandEntry,
 	}
 	return subCommand
 }
@@ -138,7 +134,7 @@ func (sc *subcommand) createSubcommandDirTree() error {
 // get the absolute directory path for the subcommand directory.
 func (sc *subcommand) getAbsoluteSubcommandDirname() string {
 	// create the string for the command ID
-	commandDirectory := fmt.Sprintf("%s/%s", eefennCLIDir, sc.Entry.Hash.String())
+	commandDirectory := fmt.Sprintf("%s/%s", eefennCLIDir, sc.Hash.String())
 
 	return commandDirectory
 }
@@ -148,14 +144,14 @@ func (sc *subcommand) getAbsoluteSubcommandDirname() string {
 // Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
 func (sc *subcommand) getSubcommandDependenciesDirectory() string {
 	// create the string for the command ID
-	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", eefennCLIDir, sc.Entry.Hash.String(), sc.Entry.Hash.String())
+	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", eefennCLIDir, sc.Hash.String(), sc.Hash.String())
 
 	return commandDependenciesDirectory
 }
 
 func (sc *subcommand) createEmptySubcommandShellFile(parentDir string) (*os.File, error) {
 	// create '<command-hash>.sh' filename string
-	fileName := fmt.Sprintf("%s/%s%s", parentDir, sc.Entry.Hash.String(), ".sh")
+	fileName := fmt.Sprintf("%s/%s%s", parentDir, sc.Hash.String(), ".sh")
 
 	// create the file
 	file, err := os.Create(fileName)
@@ -184,10 +180,10 @@ func (sc *subcommand) updateConfigJSON() error {
 	}
 
 	data[sc.Name] = map[string]interface{}{
-		"description":  sc.Entry.Description,
-		"command-hash": sc.Entry.Hash.String(),
-		"script":       fmt.Sprintf("%s.sh", sc.Entry.Hash.String()),
-		"dependencies": sc.Entry.Dependencies,
+		"description":  sc.Description,
+		"command-hash": sc.Hash.String(),
+		"script":       fmt.Sprintf("%s.sh", sc.Hash.String()),
+		"dependencies": sc.Dependencies,
 	}
 
 	updatedConfig, err := json.MarshalIndent(data, "", "	")
