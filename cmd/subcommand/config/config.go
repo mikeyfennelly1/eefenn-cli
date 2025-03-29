@@ -48,6 +48,9 @@ func AddCommand(sc *subcommand.Subcommand) error {
 	return nil
 }
 
+// RemoveCommand
+//
+// remove a command from eefenn-cli.config.json by command name
 func RemoveCommand(commandName string) error {
 	configMap, err := getConfigMap()
 	if err != nil {

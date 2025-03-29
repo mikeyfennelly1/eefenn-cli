@@ -47,6 +47,9 @@ func (sc *Subcommand) AddSubCommand() error {
 	return nil
 }
 
+// RemoveSubcommand
+//
+// Remove a subcommand's directories by command hash
 func RemoveSubcommand(commandHash string) error {
 	err := command_dir.RemoveCommandDirectoryRecursively(commandHash)
 	if err != nil {

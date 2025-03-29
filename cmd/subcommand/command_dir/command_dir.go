@@ -69,6 +69,10 @@ func CreateEmptySubcommandShellFile(commandHash string) (*os.File, error) {
 	return file, nil
 }
 
+// GetSubcommandShellFileAbsPath
+//
+// Get the absolute path to the shell script for the command
+// based on commandHash
 func GetSubcommandShellFileAbsPath(commandHash string) string {
 	// create '<command-hash>.sh' filename string
 	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandHash, commandHash)
@@ -76,6 +80,9 @@ func GetSubcommandShellFileAbsPath(commandHash string) string {
 	return fileName
 }
 
+// RemoveCommandDirectoryRecursively
+//
+// remove a command directory recursively by command hash
 func RemoveCommandDirectoryRecursively(commandHash string) error {
 	dirname := GetAbsoluteSubcommandDirname(commandHash)
 
