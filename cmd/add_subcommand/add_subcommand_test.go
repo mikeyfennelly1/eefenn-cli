@@ -7,7 +7,7 @@ import (
 )
 
 var testSubcommandDependencies = []string{"dep1.txt", "dep2.txt"}
-var testSubcommand = createSubCommand("test", "test-script.sh", testSubcommandDependencies, "test command")
+var testSubcommand = CreateSubCommand("test", "test-script.sh", testSubcommandDependencies, "test command")
 
 func TestGetAbsoluteSubcommandDirname(t *testing.T) {
 	absoluteSubcommandDirname := testSubcommand.getAbsoluteSubcommandDirname()

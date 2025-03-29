@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/eefenn/eefenn-cli/cmd/add_subcommand"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -31,17 +32,20 @@ var ascCommand = &cobra.Command{
 			return
 		}
 
-		// Print the collected data
-		fmt.Println("Name:", name)
-		fmt.Println("File:", file)
-		fmt.Println("Description:", description)
+		subCommand := add_subcommand.CreateSubCommand(name, file, description)
+		err := subCommand.AddSubCommand()
+		if err != nil {
+			fmt.Printf("Could not create subcommand %v", err)
+			return
+		}
+		fmt.Println(subCommand.Hash.String())
 	},
 }
 
 func init() {
 	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
 	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
-	ascCommand.Flags().StringVarP(&description, "description", "d", "", "Description of the entity")
+	ascCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
 
 	// Mark flags as required
 	err := ascCommand.MarkFlagRequired("name")
@@ -52,9 +56,17 @@ func init() {
 	if err != nil {
 		return
 	}
+	err = ascCommand.MarkFlagRequired("description")
+	if err != nil {
+		return
+	}
 }
 
 func main() {
+	if os.Geteuid() != 0 {
+		fmt.Println("You must be superuser to run this binary.")
+		return
+	}
 	rootCmd.AddCommand(ascCommand)
 
 	if err := rootCmd.Execute(); err != nil {
