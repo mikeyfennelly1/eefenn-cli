@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/cmd/asc"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -22,9 +21,9 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-var myCommand = &cobra.Command{
-	Use:   "create",
-	Short: "Creates an entry with a name, file, and description",
+var ascCommand = &cobra.Command{
+	Use:   "asc",
+	Short: "Add a subcommand to eefenn-cli",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Validate that the file exists
 		if _, err := os.Stat(file); os.IsNotExist(err) {
@@ -40,27 +39,23 @@ var myCommand = &cobra.Command{
 }
 
 func init() {
-	myCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
-	myCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
-	myCommand.Flags().StringVarP(&description, "description", "d", "", "Description of the entity")
+	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
+	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
+	ascCommand.Flags().StringVarP(&description, "description", "d", "", "Description of the entity")
 
 	// Mark flags as required
-	err := myCommand.MarkFlagRequired("name")
+	err := ascCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
-	err = myCommand.MarkFlagRequired("file")
+	err = ascCommand.MarkFlagRequired("file")
 	if err != nil {
 		return
 	}
 }
 
 func main() {
-	rootCmd := &cobra.Command{Use: "app"}
-	
-	rootCmd.AddCommand(myCommand)
-
-	rootCmd.AddCommand(asc.AscCommand)
+	rootCmd.AddCommand(ascCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
