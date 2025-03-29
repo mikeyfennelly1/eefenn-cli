@@ -14,8 +14,9 @@ func TestGetAbsoluteSubcommandDirname(t *testing.T) {
 	fmt.Println(absoluteSubcommandDirname)
 }
 
-func TestCreateSubCommandConfigEntry(t *testing.T) {
-	_ = testSubcommand.createSubCommandConfigEntry()
+func TestUpdateConfig(t *testing.T) {
+	err := testSubcommand.updateConfig()
+	require.NoError(t, err)
 }
 
 func TestCreateSubcommandDirTree(t *testing.T) {
@@ -24,6 +25,6 @@ func TestCreateSubcommandDirTree(t *testing.T) {
 }
 
 func TestUpdateConfigJSON(t *testing.T) {
-	err := testSubcommand.updateConfigJSON()
+	err := testSubcommand.updateConfig()
 	require.NoError(t, err)
 }
