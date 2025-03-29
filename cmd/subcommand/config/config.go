@@ -18,7 +18,7 @@ type ConfigObject struct {
 	Test subcommandData `json:"test"`
 }
 
-func GetConfigArray() (*ConfigObject, error) {
+func GetConfigObjectArray() (*ConfigObject, error) {
 	eefennCliConfig, err := os.Open(EefennCLIConfig)
 	if err != nil {
 		return nil, err

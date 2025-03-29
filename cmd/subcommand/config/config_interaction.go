@@ -1,8 +1,9 @@
-package subcommand
+package config
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/eefenn/eefenn-cli/cmd/subcommand"
 	"os"
 )
 
@@ -10,7 +11,7 @@ import (
 //
 // Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled Subcommand data.
-func (sc *Subcommand) updateConfig() error {
+func updateConfig(sc *subcommand.Subcommand) error {
 	// get the contents of eefenn-cli.config.json as a map
 	configMap, err := getConfigMap()
 	if err != nil {
@@ -35,12 +36,12 @@ func (sc *Subcommand) updateConfig() error {
 	return nil
 }
 
-// writeByteSliceToConfigFile
+// writeToConfigFile
 //
 // write the contents of a byte array to the eefenn-cli.config.json
 func writeToConfigFile(updatedConfig []byte) error {
 	// Write directly to file without re-marshaling
-	err := os.WriteFile(configJSONPath, updatedConfig, 0666)
+	err := os.WriteFile(EefennCLIConfig, updatedConfig, 0666)
 	if err != nil {
 		return err
 	}
@@ -51,7 +52,7 @@ func writeToConfigFile(updatedConfig []byte) error {
 // addSubcommandToConfigMap
 //
 // update a map of type map[string]interface{} with a Subcommand
-func addSubcommandToConfigMap(pconfigMap *map[string]interface{}, sc *Subcommand) {
+func addSubcommandToConfigMap(pconfigMap *map[string]interface{}, sc *subcommand.Subcommand) {
 	// dereference pointer to unmarshalled JSON
 	configMap := *pconfigMap
 
@@ -77,7 +78,7 @@ func getConfigByteSliceFromConfigMap(pconfigMap *map[string]interface{}) ([]byte
 // a string:interface map
 func getConfigMap() (map[string]interface{}, error) {
 	// read the json into byte array
-	fileByteArray, err := os.ReadFile(configJSONPath)
+	fileByteArray, err := os.ReadFile(EefennCLIConfig)
 	if err != nil {
 		return nil, err
 	}

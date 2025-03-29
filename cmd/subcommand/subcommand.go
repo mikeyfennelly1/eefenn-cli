@@ -8,6 +8,7 @@
 package subcommand
 
 import (
+	"github.com/eefenn/eefenn-cli/cmd/subcommand/command_dir"
 	"github.com/google/uuid"
 )
 
@@ -37,12 +38,12 @@ func (sc *Subcommand) AddSubCommand() error {
 		return err
 	}
 
-	err = sc.createSubcommandDirTree()
+	err = command_dir.CreateSubcommandDirTree(sc)
 	if err != nil {
 		return err
 	}
 
-	err = sc.copyShellFile()
+	err = command_dir.CopyShellFile(sc)
 	if err != nil {
 		return err
 	}

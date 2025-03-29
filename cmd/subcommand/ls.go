@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
@@ -14,26 +15,36 @@ type subcommandData struct {
 	Script      string `json:"script"`
 }
 
-type ConfigObject struct {
+type Config struct {
 	Test subcommandData `json:"test"`
 }
 
-func GetConfigArray() (*ConfigObject, error) {
+func (sc *subcommandData) Print() {
+	var builder strings.Builder
+	builder.WriteString("\t" + sc.Hash[:8])
+	builder.WriteString("\t" + sc.Description)
+	builder.WriteString("\t" + sc.Script + "\n")
+	fmt.Printf(builder.String())
+}
+
+func ListCommands() error {
 	eefennCliConfig, err := os.Open(EefennCLIConfig)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer eefennCliConfig.Close()
 
-	var config ConfigObject
+	var config Config
 	decoder := json.NewDecoder(eefennCliConfig)
 	err = decoder.Decode(&config)
 
 	if err != nil {
 		fmt.Printf("Error decoding %s: %v", EefennCLIConfig, err)
-		return nil, err
+		return err
 	}
 
 	// Print the details of the "test" command
-	return &config, nil
+	config.Test.Print()
+
+	return nil
 }
