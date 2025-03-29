@@ -16,3 +16,11 @@ func TestAddCommand(t *testing.T) {
 	err = AddCommand(&testSubcommand2)
 	require.NoError(t, err)
 }
+
+func TestRemoveCommand(t *testing.T) {
+	err := RemoveCommand("test")
+	require.NoError(t, err)
+
+	err = RemoveCommand("test2")
+	require.NoError(t, err)
+}

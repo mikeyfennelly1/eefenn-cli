@@ -48,13 +48,24 @@ func AddCommand(sc *subcommand.Subcommand) error {
 	return nil
 }
 
-func RemoveCommand(commandHash string) error {
+func RemoveCommand(commandName string) error {
 	configMap, err := getConfigMap()
 	if err != nil {
 		return err
 	}
 
-	delete(configMap, commandHash)
+	delete(configMap, commandName)
+
+	configByteSlice, err := getConfigByteSliceFromConfigMap(&configMap)
+	if err != nil {
+		return err
+	}
+
+	// write the updated slice of bytes to eefenn-cli.config.json
+	err = writeToConfigFile(configByteSlice)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
