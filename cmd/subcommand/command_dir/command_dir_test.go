@@ -37,6 +37,6 @@ func TestCreateSubcommandDirTree(t *testing.T) {
 }
 
 func TestRemoveCommandDirectoryRecursively(t *testing.T) {
-	err := removeCommandDirectoryRecursively(TestCommandId)
+	err := RemoveCommandDirectoryRecursively(TestCommandId)
 	require.NoError(t, err)
 }

@@ -5,14 +5,14 @@ import (
 	"os"
 )
 
-func CopyShellScript(sourceScript string, commandId string) error {
+func CopyShellScript(sourceScript string, commandHash string) error {
 	sourceFile, err := os.OpenFile(sourceScript, os.O_RDONLY, 0666)
 	if err != nil {
 		return err
 	}
 	defer sourceFile.Close()
 
-	destinationFile, err := CreateEmptySubcommandShellFile(commandId)
+	destinationFile, err := CreateEmptySubcommandShellFile(commandHash)
 	if err != nil {
 		return err
 	}

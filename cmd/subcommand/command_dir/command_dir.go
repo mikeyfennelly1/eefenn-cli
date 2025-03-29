@@ -10,9 +10,9 @@ const EefennCLIRoot = "/usr/lib/eefenn-cli"
 // CreateSubcommandDirTree
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
-func CreateSubcommandDirTree(commandId string) error {
+func CreateSubcommandDirTree(commandHash string) error {
 	// create the directory that contains dependencies and script for the command
-	subCommandDependenciesDir := GetSubcommandDependenciesDirectory(commandId)
+	subCommandDependenciesDir := GetSubcommandDependenciesDirectory(commandHash)
 
 	err := os.MkdirAll(subCommandDependenciesDir, 0755)
 	if err != nil {
@@ -20,7 +20,7 @@ func CreateSubcommandDirTree(commandId string) error {
 	}
 
 	// create a blank command script
-	blankFile, err := CreateEmptySubcommandShellFile(commandId)
+	blankFile, err := CreateEmptySubcommandShellFile(commandHash)
 	if err != nil {
 		return fmt.Errorf("Could not create empty Subcommand .sh file\n")
 	}
@@ -37,9 +37,9 @@ func CreateSubcommandDirTree(commandId string) error {
 // GetAbsoluteSubcommandDirname
 //
 // get the absolute directory path for the Subcommand directory.
-func GetAbsoluteSubcommandDirname(commandID string) string {
+func GetAbsoluteSubcommandDirname(commandHash string) string {
 	// create the string for the command ID
-	commandDirectory := fmt.Sprintf("%s/%s", EefennCLIRoot, commandID)
+	commandDirectory := fmt.Sprintf("%s/%s", EefennCLIRoot, commandHash)
 
 	return commandDirectory
 }
@@ -47,9 +47,9 @@ func GetAbsoluteSubcommandDirname(commandID string) string {
 // GetSubcommandDependenciesDirectory
 //
 // Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
-func GetSubcommandDependenciesDirectory(commandId string) string {
+func GetSubcommandDependenciesDirectory(commandHash string) string {
 	// create the string for the command ID
-	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, commandId, commandId)
+	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, commandHash, commandHash)
 
 	return commandDependenciesDirectory
 }
@@ -57,8 +57,8 @@ func GetSubcommandDependenciesDirectory(commandId string) string {
 // CreateEmptySubcommandShellFile
 //
 // Create an empty shell file of the name <command-hash>.sh
-func CreateEmptySubcommandShellFile(commandId string) (*os.File, error) {
-	fileName := GetSubcommandShellFileAbsPath(commandId)
+func CreateEmptySubcommandShellFile(commandHash string) (*os.File, error) {
+	fileName := GetSubcommandShellFileAbsPath(commandHash)
 
 	// create the file
 	file, err := os.Create(fileName)
@@ -69,15 +69,15 @@ func CreateEmptySubcommandShellFile(commandId string) (*os.File, error) {
 	return file, nil
 }
 
-func GetSubcommandShellFileAbsPath(commandId string) string {
+func GetSubcommandShellFileAbsPath(commandHash string) string {
 	// create '<command-hash>.sh' filename string
-	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandId, commandId)
+	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandHash, commandHash)
 
 	return fileName
 }
 
-func removeCommandDirectoryRecursively(commandId string) error {
-	dirname := GetAbsoluteSubcommandDirname(commandId)
+func RemoveCommandDirectoryRecursively(commandHash string) error {
+	dirname := GetAbsoluteSubcommandDirname(commandHash)
 
 	err := os.RemoveAll(dirname)
 	if err != nil {

@@ -1,6 +1,6 @@
-// subcommand.go
+// Subcommand.go
 //
-// asc (add subcommand) is a method of customizing the command line tool
+// asc (add Subcommand) is a method of customizing the command line tool
 // by updating the directory /usr/lib/eefenn-cli and eefenn-cli.config.json
 //
 // @author Mikey Fennelly
@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type subcommand struct {
+type Subcommand struct {
 	// alias of the script
 	Name string `json:"name"`
 
@@ -28,16 +28,16 @@ type subcommand struct {
 
 // AddSubCommand
 //
-// Add a subcommand, and it's script to the user's CLI
-func (sc *subcommand) AddSubCommand() error {
+// Add a Subcommand, and it's script to the user's CLI
+func (sc *Subcommand) AddSubCommand() error {
 	// create directory structure
-	err := command_dir.CreateSubcommandDirTree(sc.getSubcommandId())
+	err := command_dir.CreateSubcommandDirTree(sc.Hash.String())
 	if err != nil {
 		return err
 	}
 
 	// copy the shell script
-	err = command_dir.CopyShellScript(sc.SourceScript, sc.getSubcommandId())
+	err = command_dir.CopyShellScript(sc.SourceScript, sc.Hash.String())
 	if err != nil {
 		return err
 	}
@@ -47,12 +47,21 @@ func (sc *subcommand) AddSubCommand() error {
 	return nil
 }
 
+func RemoveSubcommand(commandHash string) error {
+	err := command_dir.RemoveCommandDirectoryRecursively(commandHash)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // CreateSubCommand
 //
-// Create a subcommand struct based on required command information
-func CreateSubCommand(name string, sourceScriptName string, description string) subcommand {
+// Create a Subcommand struct based on required command information
+func CreateSubCommand(name string, sourceScriptName string, description string) Subcommand {
 	UUID := uuid.New()
-	subCommand := subcommand{
+	subCommand := Subcommand{
 		Name:         name,
 		Hash:         UUID,
 		SourceScript: sourceScriptName,
@@ -61,6 +70,6 @@ func CreateSubCommand(name string, sourceScriptName string, description string) 
 	return subCommand
 }
 
-func (sc *subcommand) getSubcommandId() string {
+func (sc *Subcommand) getSubcommandId() string {
 	return sc.Hash.String()[:8]
 }
