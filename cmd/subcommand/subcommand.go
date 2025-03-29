@@ -1,6 +1,6 @@
 // subcommand.go
 //
-// asc (add Subcommand) is a method of customizing the command line tool
+// asc (add subcommand) is a method of customizing the command line tool
 // by updating the directory /usr/lib/eefenn-cli and eefenn-cli.config.json
 //
 // @author Mikey Fennelly
@@ -12,10 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const eefennCLIDir = "/usr/lib/eefenn-cli"
-const configJSONPath = eefennCLIDir + "/eefenn-cli.config.json"
-
-type Subcommand struct {
+type subcommand struct {
 	// alias of the script
 	Name string `json:"name"`
 
@@ -31,36 +28,39 @@ type Subcommand struct {
 
 // AddSubCommand
 //
-// Add a Subcommand, and it's script to the user's CLI
-func (sc *Subcommand) AddSubCommand() error {
-	err := sc.updateConfig()
+// Add a subcommand, and it's script to the user's CLI
+func (sc *subcommand) AddSubCommand() error {
+	// create directory structure
+	err := command_dir.CreateSubcommandDirTree(sc.getSubcommandId())
 	if err != nil {
 		return err
 	}
 
-	err = command_dir.CreateSubcommandDirTree(sc)
+	// copy the shell script
+	err = command_dir.CopyShellScript(sc.SourceScript, sc.getSubcommandId())
 	if err != nil {
 		return err
 	}
 
-	err = command_dir.CopyShellFile(sc)
-	if err != nil {
-		return err
-	}
+	// update the eefenn-cli.config.json to contain the command info
 
 	return nil
 }
 
 // CreateSubCommand
 //
-// Create a Subcommand struct based on required command information
-func CreateSubCommand(name string, sourceScriptName string, description string) Subcommand {
+// Create a subcommand struct based on required command information
+func CreateSubCommand(name string, sourceScriptName string, description string) subcommand {
 	UUID := uuid.New()
-	subCommand := Subcommand{
+	subCommand := subcommand{
 		Name:         name,
 		Hash:         UUID,
 		SourceScript: sourceScriptName,
 		Description:  description,
 	}
 	return subCommand
+}
+
+func (sc *subcommand) getSubcommandId() string {
+	return sc.Hash.String()[:8]
 }

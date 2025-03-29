@@ -58,8 +58,7 @@ func GetSubcommandDependenciesDirectory(commandId string) string {
 //
 // Create an empty shell file of the name <command-hash>.sh
 func CreateEmptySubcommandShellFile(commandId string) (*os.File, error) {
-	// create '<command-hash>.sh' filename string
-	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandId, commandId)
+	fileName := GetSubcommandShellFileAbsPath(commandId)
 
 	// create the file
 	file, err := os.Create(fileName)
@@ -68,6 +67,13 @@ func CreateEmptySubcommandShellFile(commandId string) (*os.File, error) {
 	}
 
 	return file, nil
+}
+
+func GetSubcommandShellFileAbsPath(commandId string) string {
+	// create '<command-hash>.sh' filename string
+	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandId, commandId)
+
+	return fileName
 }
 
 func removeCommandDirectoryRecursively(commandId string) error {

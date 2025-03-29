@@ -10,15 +10,15 @@ import (
 // updateConfig
 //
 // Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
-// marshalled Subcommand data.
-func updateConfig(sc *subcommand.Subcommand) error {
+// marshalled subcommand data.
+func updateConfig(sc *subcommand.subcommand) error {
 	// get the contents of eefenn-cli.config.json as a map
 	configMap, err := getConfigMap()
 	if err != nil {
 		return err
 	}
 
-	// update the map structure, adding the Subcommand
+	// update the map structure, adding the subcommand
 	addSubcommandToConfigMap(&configMap, sc)
 
 	// get the data of the updated config map as type []byte
@@ -51,12 +51,12 @@ func writeToConfigFile(updatedConfig []byte) error {
 
 // addSubcommandToConfigMap
 //
-// update a map of type map[string]interface{} with a Subcommand
-func addSubcommandToConfigMap(pconfigMap *map[string]interface{}, sc *subcommand.Subcommand) {
+// update a map of type map[string]interface{} with a subcommand
+func addSubcommandToConfigMap(pconfigMap *map[string]interface{}, sc *subcommand.subcommand) {
 	// dereference pointer to unmarshalled JSON
 	configMap := *pconfigMap
 
-	// create update the map to include this Subcommand as map
+	// create update the map to include this subcommand as map
 	configMap[sc.Name] = map[string]interface{}{
 		"description":  sc.Description,
 		"command-hash": sc.Hash.String(),
