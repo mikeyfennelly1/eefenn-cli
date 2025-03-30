@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "definitions": {
+    "subcommand": {
+      "name": {
+        "type": "string"
+      },
+      "script": {
+        "type": "script"
+      },
+      "hash": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "required": ["name", "script", "hash"]
+    }
+  },
+  "type": "object",
+  "properties" : {
+    "remote_repo_url": {
+      "type": "string"
+    },
+    "subcommands": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/subcommand"}
+    }
+  },
+  "required": [
+    "remote_repo_url"
+  ]
+}
