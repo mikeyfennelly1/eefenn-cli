@@ -42,6 +42,17 @@ var ascCommand = &cobra.Command{
 	},
 }
 
+var lsCommand = &cobra.Command{
+	Use:   "ls",
+	Short: "List all subcommands",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := subcmd.ListCommands()
+		if err != nil {
+			return
+		}
+	},
+}
+
 func init() {
 	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
 	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
@@ -68,6 +79,8 @@ func main() {
 		return
 	}
 	rootCmd.AddCommand(ascCommand)
+
+	rootCmd.AddCommand(lsCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
