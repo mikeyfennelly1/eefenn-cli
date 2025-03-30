@@ -1,4 +1,4 @@
-package subcommand
+package subcmd
 
 import (
 	"github.com/stretchr/testify/require"
@@ -13,6 +13,6 @@ func TestAddSubCommand(t *testing.T) {
 }
 
 func TestRemoveSubcommand(t *testing.T) {
-	err := RemoveSubcommand(testSubcommand.Hash.String())
+	err := RemoveSubcommand(testSubcommand.Hash.String(), testSubcommand.Name)
 	require.NoError(t, err)
 }

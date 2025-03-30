@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/cmd/subcommand"
+	"github.com/eefenn/eefenn-cli/subcmd"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -32,7 +32,7 @@ var ascCommand = &cobra.Command{
 			return
 		}
 
-		subCommand := subcommand.CreateSubCommand(name, file, description)
+		subCommand := subcmd.CreateSubCommand(name, file, description)
 		err := subCommand.AddSubCommand()
 		if err != nil {
 			fmt.Printf("Could not create subcommand %v", err)

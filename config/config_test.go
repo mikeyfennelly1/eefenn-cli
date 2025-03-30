@@ -1,13 +1,13 @@
 package config
 
 import (
-	"github.com/eefenn/eefenn-cli/cmd/subcommand"
+	"github.com/eefenn/eefenn-cli/subcmd"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-var testSubcommand = subcommand.CreateSubCommand("test", "test-script.sh", "test command")
-var testSubcommand2 = subcommand.CreateSubCommand("test2", "test-script.sh", "test command")
+var testSubcommand = subcmd.CreateSubCommand("test", "test-script.sh", "test command")
+var testSubcommand2 = subcmd.CreateSubCommand("test2", "test-script.sh", "test command")
 
 func TestAddCommand(t *testing.T) {
 	err := AddCommand(&testSubcommand)

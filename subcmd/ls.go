@@ -1,4 +1,4 @@
-package subcommand
+package subcmd
 
 import (
 	"encoding/json"
@@ -20,6 +20,9 @@ type Config struct {
 }
 
 func (sc *subcommandData) Print() {
+	if sc.Hash == "" {
+		return
+	}
 	var builder strings.Builder
 	builder.WriteString("\t" + sc.Hash[:8])
 	builder.WriteString("\t" + sc.Description)

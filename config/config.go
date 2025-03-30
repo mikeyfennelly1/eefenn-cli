@@ -3,7 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/eefenn/eefenn-cli/cmd/subcommand"
+	"github.com/eefenn/eefenn-cli/subcmd"
 	"os"
 )
 
@@ -23,7 +23,7 @@ type ConfigObject struct {
 //
 // Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled subcommand data.
-func AddCommand(sc *subcommand.Subcommand) error {
+func AddCommand(sc *subcmd.Subcommand) error {
 	// get the contents of eefenn-cli.config.json as a map
 	configMap, err := getConfigMap()
 	if err != nil {
@@ -89,7 +89,7 @@ func writeToConfigFile(updatedConfig []byte) error {
 // addSubcommandToConfigMap
 //
 // update a map of type map[string]interface{} with a subcommand
-func addSubcommandToConfigMap(pconfigMap *map[string]interface{}, sc *subcommand.Subcommand) {
+func addSubcommandToConfigMap(pconfigMap *map[string]interface{}, sc *subcmd.Subcommand) {
 	// dereference pointer to unmarshalled JSON
 	configMap := *pconfigMap
 

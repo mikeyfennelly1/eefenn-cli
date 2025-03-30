@@ -5,10 +5,10 @@
 //
 // @author Mikey Fennelly
 
-package subcommand
+package subcmd
 
 import (
-	"github.com/eefenn/eefenn-cli/cmd/subcommand/command_dir"
+	command_dir2 "github.com/eefenn/eefenn-cli/command_dir"
 	"github.com/google/uuid"
 )
 
@@ -31,13 +31,13 @@ type Subcommand struct {
 // Add a Subcommand, and it's script to the user's CLI
 func (sc *Subcommand) AddSubCommand() error {
 	// create directory structure
-	err := command_dir.CreateSubcommandDirTree(sc.Hash.String())
+	err := command_dir2.CreateSubcommandDirTree(sc.Hash.String())
 	if err != nil {
 		return err
 	}
 
 	// copy the shell script
-	err = command_dir.CopyShellScript(sc.SourceScript, sc.Hash.String())
+	err = command_dir2.CopyShellScript(sc.SourceScript, sc.Hash.String())
 	if err != nil {
 		return err
 	}
@@ -50,8 +50,12 @@ func (sc *Subcommand) AddSubCommand() error {
 // RemoveSubcommand
 //
 // Remove a subcommand's directories by command hash
-func RemoveSubcommand(commandHash string) error {
-	err := command_dir.RemoveCommandDirectoryRecursively(commandHash)
+func RemoveSubcommand(commandHash string, commandName string) error {
+	err := command_dir2.RemoveCommandDirectoryRecursively(commandHash)
+	if err != nil {
+		return err
+	}
+
 	if err != nil {
 		return err
 	}
