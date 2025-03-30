@@ -10,7 +10,7 @@ var testSubcommand = subcmd.CreateSubCommand("test", "test-script.sh", "test com
 var testSubcommand2 = subcmd.CreateSubCommand("test2", "test-script.sh", "test command")
 
 func TestAddCommand(t *testing.T) {
-	err := AddCommand(&testSubcommand)
+	err := (&testSubcommand)
 	require.NoError(t, err)
 
 	err = AddCommand(&testSubcommand2)

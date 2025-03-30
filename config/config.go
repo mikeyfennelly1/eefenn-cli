@@ -2,75 +2,22 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/eefenn/eefenn-cli/subcmd"
 	"os"
 )
 
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
-type subcommandData struct {
+type Config struct {
+	RemoteRepoURL string
+	Subcommands   []Subcommand
+}
+
+type Subcommand struct {
+	Name        string `json:"name"`
 	Hash        string `json:"command-hash"`
 	Description string `json:"description"`
 	Script      string `json:"script"`
-}
-
-type ConfigObject struct {
-	Test subcommandData `json:"test"`
-}
-
-// AddCommand
-//
-// Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
-// marshalled subcommand data.
-func AddCommand(sc *subcmd.Subcommand) error {
-	// get the contents of eefenn-cli.config.json as a map
-	configMap, err := getConfigMap()
-	if err != nil {
-		return err
-	}
-
-	// update the map structure, adding the subcommand
-	addSubcommandToConfigMap(&configMap, sc)
-
-	// get the data of the updated config map as type []byte
-	configByteSlice, err := getConfigByteSliceFromConfigMap(&configMap)
-	if err != nil {
-		return err
-	}
-
-	// write the updated slice of bytes to eefenn-cli.config.json
-	err = writeToConfigFile(configByteSlice)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// RemoveCommand
-//
-// remove a command from eefenn-cli.config.json by command name
-func RemoveCommand(commandName string) error {
-	configMap, err := getConfigMap()
-	if err != nil {
-		return err
-	}
-
-	delete(configMap, commandName)
-
-	configByteSlice, err := getConfigByteSliceFromConfigMap(&configMap)
-	if err != nil {
-		return err
-	}
-
-	// write the updated slice of bytes to eefenn-cli.config.json
-	err = writeToConfigFile(configByteSlice)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	DateCreated string `json:"string"`
 }
 
 // writeToConfigFile
@@ -86,46 +33,42 @@ func writeToConfigFile(updatedConfig []byte) error {
 	return nil
 }
 
-// addSubcommandToConfigMap
-//
-// update a map of type map[string]interface{} with a subcommand
-func addSubcommandToConfigMap(pconfigMap *map[string]interface{}, sc *subcmd.Subcommand) {
-	// dereference pointer to unmarshalled JSON
-	configMap := *pconfigMap
+func readConfig() (Config, error) {
+	var config Config
 
-	// create update the map to include this subcommand as map
-	configMap[sc.Name] = map[string]interface{}{
-		"description":  sc.Description,
-		"command-hash": sc.Hash.String(),
-		"script":       fmt.Sprintf("%s.sh", sc.Hash.String()),
+	// Open the JSON file
+	file, err := os.Open(EefennCLIConfig)
+	if err != nil {
+		return config, err
 	}
+	defer file.Close()
+
+	// Decode the JSON data into the struct
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
+		return config, err
+	}
+
+	return config, nil
 }
 
-// getConfigByteSliceFromConfigMap
-//
-// given a pointer to a map of type, map[string]interface{}, marshal to a
-// byte slice
-func getConfigByteSliceFromConfigMap(pconfigMap *map[string]interface{}) ([]byte, error) {
-	return json.MarshalIndent(*pconfigMap, "", "    ")
+func (c *Config) getSubCommandByName(name string) Subcommand {
+	var targetIndex int
+
+	// find the index of the item whose Name matches the parameter 'name'
+	for index, sc := range c.Subcommands {
+		if sc.Name == name {
+			targetIndex = index
+		}
+	}
+
+	return c.Subcommands[targetIndex]
 }
 
-// getConfigMap
+// List
 //
-// Unmarshal the eefenn-cli.config.json file into
-// a string:interface map
-func getConfigMap() (map[string]interface{}, error) {
-	// read the json into byte array
-	fileByteArray, err := os.ReadFile(EefennCLIConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	// Step 2: Unmarshal .json into a map
-	var unmarshalledJSON map[string]interface{}
-	err = json.Unmarshal(fileByteArray, &unmarshalledJSON)
-	if err != nil {
-		return nil, err
-	}
-
-	return unmarshalledJSON, nil
+// Print a subcommand in the format of the ef ls command
+func (sc *Subcommand) List() {
+	
 }

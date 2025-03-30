@@ -51,30 +51,5 @@ func (sc *subcommandData) getPrintFormat() (*CommandPrintFormat, error) {
 }
 
 func ListCommands() error {
-	eefennCliConfig, err := os.Open(EefennCLIConfig)
-	if err != nil {
-		return err
-	}
-	defer eefennCliConfig.Close()
 
-	var config Config
-	decoder := json.NewDecoder(eefennCliConfig)
-	err = decoder.Decode(&config)
-
-	if err != nil {
-		fmt.Printf("Error decoding %s: %v", EefennCLIConfig, err)
-		return err
-	}
-
-	// Print the details of the "test" command
-	configAsPrintFormat, err := config.Test.getPrintFormat()
-	if err != nil {
-		return err
-	}
-
-	printHeaders()
-
-	configAsPrintFormat.printCommandLine()
-
-	return nil
 }
