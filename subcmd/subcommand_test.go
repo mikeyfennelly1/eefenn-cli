@@ -13,6 +13,6 @@ func TestAddSubCommand(t *testing.T) {
 }
 
 func TestRemoveSubcommand(t *testing.T) {
-	err := RemoveSubcommand(testSubcommand.Hash.String(), testSubcommand.Name)
+	err := RemoveSubcommand(testSubcommand.Hash, testSubcommand.Name)
 	require.NoError(t, err)
 }

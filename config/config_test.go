@@ -1,18 +1,25 @@
 package config
 
 import (
-	"github.com/eefenn/eefenn-cli/subcmd"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-var testSubcommand = subcmd.CreateSubCommand("test", "test-script.sh", "test command")
-var testSubcommand2 = subcmd.CreateSubCommand("test2", "test-script.sh", "test command")
+var testSubcommands = []Subcommand{
+	{
+		Name:        "test",
+		Script:      "test.sh",
+		Hash:        "b6f5d20c-3fbe-4326-88c7-c3b4ef967c02",
+		Description: "test description for test-eefenn-cli.config.json",
+		DateCreated: "2025-03-30T14:25:36Z",
+	},
+}
 
-func TestRemoveCommand(t *testing.T) {
-	err := RemoveCommand("test")
-	require.NoError(t, err)
+func TestReadConfig(t *testing.T) {
+	config, err := ReadConfig()
+	if err != nil {
+		return
+	}
 
-	err = RemoveCommand("test2")
-	require.NoError(t, err)
+	assert.Equal(t, testSubcommands, config.Subcommands)
 }

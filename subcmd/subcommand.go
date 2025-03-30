@@ -17,13 +17,15 @@ type Subcommand struct {
 	Name string `json:"name"`
 
 	// unique identifier for the command
-	Hash uuid.UUID `json:"command-hash"`
+	Hash string `json:"hash"`
 
 	// the script which the command is an alias for
-	SourceScript string `json:"script"`
+	Script string `json:"script"`
 
 	// description for what the script does
-	Description string `json:"description,omitempty"`
+	Description string `json:"desc,omitempty"`
+
+	DateCreated string `json:"dateCreated"`
 }
 
 // AddSubCommand
@@ -31,13 +33,13 @@ type Subcommand struct {
 // Add a Subcommand, and it's script to the user's CLI
 func (sc *Subcommand) AddSubCommand() error {
 	// create directory structure
-	err := command_dir2.CreateSubcommandDirTree(sc.Hash.String())
+	err := command_dir2.CreateSubcommandDirTree(sc.Hash)
 	if err != nil {
 		return err
 	}
 
 	// copy the shell script
-	err = command_dir2.CopyShellScript(sc.SourceScript, sc.Hash.String())
+	err = command_dir2.CopyShellScript(sc.Script, sc.Hash)
 	if err != nil {
 		return err
 	}
@@ -67,16 +69,16 @@ func RemoveSubcommand(commandHash string, commandName string) error {
 //
 // Create a Subcommand struct based on required command information
 func CreateSubCommand(name string, sourceScriptName string, description string) Subcommand {
-	UUID := uuid.New()
+	UUID := uuid.New().String()
 	subCommand := Subcommand{
-		Name:         name,
-		Hash:         UUID,
-		SourceScript: sourceScriptName,
-		Description:  description,
+		Name:        name,
+		Hash:        UUID,
+		Script:      sourceScriptName,
+		Description: description,
 	}
 	return subCommand
 }
 
 func (sc *Subcommand) getSubcommandId() string {
-	return sc.Hash.String()[:8]
+	return sc.Hash[:8]
 }

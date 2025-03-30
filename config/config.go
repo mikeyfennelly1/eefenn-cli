@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -14,10 +15,10 @@ type Config struct {
 
 type Subcommand struct {
 	Name        string `json:"name"`
-	Hash        string `json:"command-hash"`
+	Hash        string `json:"hash"`
 	Description string `json:"description"`
 	Script      string `json:"script"`
-	DateCreated string `json:"string"`
+	DateCreated string `json:"dateCreated"`
 }
 
 // writeToConfigFile
@@ -70,5 +71,5 @@ func (c *Config) getSubCommandByName(name string) Subcommand {
 //
 // Print a subcommand in the format of the ef ls command
 func (sc *Subcommand) List() {
-
+	fmt.Printf("%-10s %-10s %-20s\n", sc.Hash[:8], sc.Name, sc.Description)
 }
