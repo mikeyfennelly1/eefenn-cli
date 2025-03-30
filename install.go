@@ -10,7 +10,7 @@
 
 // ... Notifies user of exit status of the command
 
-package subcmd
+package main
 
 import (
 	"fmt"

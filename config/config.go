@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/eefenn/eefenn-cli/subcommand"
 	"os"
 )
 
@@ -10,15 +10,7 @@ const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 type Config struct {
 	RemoteRepoURL string
-	Subcommands   []Subcommand
-}
-
-type Subcommand struct {
-	Name        string `json:"name"`
-	Hash        string `json:"hash"`
-	Description string `json:"description"`
-	Script      string `json:"script"`
-	DateCreated string `json:"dateCreated"`
+	Subcommands   []subcommand.Subcommand
 }
 
 // writeToConfigFile
@@ -54,7 +46,7 @@ func ReadConfig() (Config, error) {
 	return config, nil
 }
 
-func (c *Config) getSubCommandByName(name string) Subcommand {
+func (c *Config) getSubCommandByName(name string) subcommand.Subcommand {
 	var targetIndex int
 
 	// find the index of the item whose Name matches the parameter 'name'
@@ -65,11 +57,4 @@ func (c *Config) getSubCommandByName(name string) Subcommand {
 	}
 
 	return c.Subcommands[targetIndex]
-}
-
-// List
-//
-// Print a subcommand in the format of the ef ls command
-func (sc *Subcommand) List() {
-	fmt.Printf("%-10s %-10s %-20s\n", sc.Hash[:8], sc.Name, sc.Description)
 }

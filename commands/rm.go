@@ -5,33 +5,18 @@
 //
 // @author Mikey Fennelly
 
-package subcmd
+package commands
 
 import (
 	command_dir2 "github.com/eefenn/eefenn-cli/command_dir"
+	"github.com/eefenn/eefenn-cli/subcommand"
 	"github.com/google/uuid"
 )
-
-type Subcommand struct {
-	// alias of the script
-	Name string `json:"name"`
-
-	// unique identifier for the command
-	Hash string `json:"hash"`
-
-	// the script which the command is an alias for
-	Script string `json:"script"`
-
-	// description for what the script does
-	Description string `json:"desc,omitempty"`
-
-	DateCreated string `json:"dateCreated"`
-}
 
 // AddSubCommand
 //
 // Add a Subcommand, and it's script to the user's CLI
-func (sc *Subcommand) AddSubCommand() error {
+func AddSubCommand(sc *subcommand.Subcommand) error {
 	// create directory structure
 	err := command_dir2.CreateSubcommandDirTree(sc.Hash)
 	if err != nil {
@@ -68,17 +53,13 @@ func RemoveSubcommand(commandHash string, commandName string) error {
 // CreateSubCommand
 //
 // Create a Subcommand struct based on required command information
-func CreateSubCommand(name string, sourceScriptName string, description string) Subcommand {
+func CreateSubCommand(name string, sourceScriptName string, description string) subcommand.Subcommand {
 	UUID := uuid.New().String()
-	subCommand := Subcommand{
+	subCommand := subcommand.Subcommand{
 		Name:        name,
 		Hash:        UUID,
 		Script:      sourceScriptName,
 		Description: description,
 	}
 	return subCommand
-}
-
-func (sc *Subcommand) getSubcommandId() string {
-	return sc.Hash[:8]
 }
