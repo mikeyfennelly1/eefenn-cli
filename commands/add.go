@@ -27,5 +27,10 @@ func Add(subcommand subcommand.Subcommand) error {
 		return err
 	}
 
+	err = command_dir.CopyShellScript(subcommand.Script, subcommand.Hash)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
