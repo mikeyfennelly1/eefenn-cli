@@ -6,12 +6,8 @@ import (
 )
 
 func TestRemoveCommand(t *testing.T) {
-	err := RemoveCommandByName("test")
-	require.NoError(t, err)
-}
-
-func TestRemoveCommand2(t *testing.T) {
-	err := RemoveCommandByName("test2")
+	currentConfig, err := GetCurrentConfig()
+	err = currentConfig.RemoveCommandByName("test")
 	require.NoError(t, err)
 }
 

@@ -8,58 +8,40 @@
 package commands
 
 import (
-	command_dir2 "github.com/eefenn/eefenn-cli/command_dir"
-	"github.com/eefenn/eefenn-cli/subcommand"
-	"github.com/google/uuid"
+	"github.com/eefenn/eefenn-cli/command_dir"
+	"github.com/eefenn/eefenn-cli/config"
 )
-
-// AddSubCommand
-//
-// Add a Subcommand, and it's script to the user's CLI
-func AddSubCommand(sc *subcommand.Subcommand) error {
-	// create directory structure
-	err := command_dir2.CreateSubcommandDirTree(sc.Hash)
-	if err != nil {
-		return err
-	}
-
-	// copy the shell script
-	err = command_dir2.CopyShellScript(sc.Script, sc.Hash)
-	if err != nil {
-		return err
-	}
-
-	// update the eefenn-cli.config.json to contain the command info
-
-	return nil
-}
 
 // RemoveSubcommand
 //
 // Remove a subcommand's directories by command hash
-func RemoveSubcommand(commandHash string, commandName string) error {
-	err := command_dir2.RemoveCommandDirectoryRecursively(commandHash)
+func RemoveSubcommand(commandName string) error {
+	// get the current eefenn-cli.config.json
+	currentConfig, err := config.GetCurrentConfig()
 	if err != nil {
 		return err
 	}
 
+	// get the hash code for the command
+	commandHash, err := currentConfig.GetCommandHash(commandName)
 	if err != nil {
 		return err
 	}
+
+	// remove the command directory for this command
+	err = command_dir.RemoveCommandDirectoryRecursively(*commandHash)
+	if err != nil {
+		return err
+	}
+
+	// remove the entry for the command from the config file
+	err = currentConfig.RemoveCommandByName(commandName)
+	if err != nil {
+		return err
+	}
+
+	// update the eefenn-cli.config.json
+	currentConfig.Update()
 
 	return nil
-}
-
-// CreateSubCommand
-//
-// Create a Subcommand struct based on required command information
-func CreateSubCommand(name string, sourceScriptName string, description string) subcommand.Subcommand {
-	UUID := uuid.New().String()
-	subCommand := subcommand.Subcommand{
-		Name:        name,
-		Hash:        UUID,
-		Script:      sourceScriptName,
-		Description: description,
-	}
-	return subCommand
 }

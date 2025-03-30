@@ -26,7 +26,7 @@ func writeToConfigFile(updatedConfig []byte) error {
 	return nil
 }
 
-func ReadConfig() (Config, error) {
+func GetCurrentConfig() (Config, error) {
 	var config Config
 
 	// Open the JSON file

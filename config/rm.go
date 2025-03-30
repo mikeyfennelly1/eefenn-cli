@@ -1,11 +1,6 @@
 package config
 
-func RemoveCommandByName(name string) error {
-	config, err := ReadConfig()
-	if err != nil {
-		return err
-	}
-
+func (config *Config) RemoveCommandByName(name string) error {
 	var targetIndex int
 
 	for index, scmd := range config.Subcommands {
@@ -22,7 +17,7 @@ func RemoveCommandByName(name string) error {
 }
 
 func RemoveCommandById(id string) error {
-	config, err := ReadConfig()
+	config, err := GetCurrentConfig()
 	if err != nil {
 		return err
 	}

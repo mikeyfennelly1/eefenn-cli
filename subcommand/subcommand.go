@@ -1,6 +1,9 @@
 package subcommand
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/google/uuid"
+)
 
 type Subcommand struct {
 	// alias of the script
@@ -27,4 +30,18 @@ func (sc *Subcommand) List() {
 
 func (sc *Subcommand) getSubcommandId() string {
 	return sc.Hash[:8]
+}
+
+// CreateSubCommand
+//
+// Create a Subcommand struct based on required command information
+func CreateSubCommand(name string, sourceScriptName string, description string) Subcommand {
+	UUID := uuid.New().String()
+	subCommand := Subcommand{
+		Name:        name,
+		Hash:        UUID,
+		Script:      sourceScriptName,
+		Description: description,
+	}
+	return subCommand
 }

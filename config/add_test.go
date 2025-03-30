@@ -7,7 +7,7 @@ import (
 )
 
 func TestAddCommand(t *testing.T) {
-	config, err := ReadConfig()
+	config, err := GetCurrentConfig()
 	require.NoError(t, err)
 
 	testCommandToAdd := subcommand.Subcommand{

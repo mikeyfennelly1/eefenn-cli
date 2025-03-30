@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/eefenn/eefenn-cli/commands"
+	"github.com/eefenn/eefenn-cli/subcommand"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -11,6 +12,7 @@ var (
 	file        string
 	name        string
 	description string
+	commandName string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -23,7 +25,7 @@ var rootCmd = &cobra.Command{
 }
 
 var ascCommand = &cobra.Command{
-	Use:   "asc",
+	Use:   "add",
 	Short: "Add a subcommand to eefenn-cli",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Validate that the file exists
@@ -32,13 +34,13 @@ var ascCommand = &cobra.Command{
 			return
 		}
 
-		subCommand := commands.CreateSubCommand(name, file, description)
-		err := subCommand.AddSubCommand()
+		thisSubcommand := subcommand.CreateSubCommand(name, file, description)
+		err := commands.Add(thisSubcommand)
 		if err != nil {
 			fmt.Printf("Could not create subcommand %v", err)
 			return
 		}
-		fmt.Println(subCommand.Hash.String())
+		fmt.Println(thisSubcommand.Hash)
 	},
 }
 
@@ -46,7 +48,18 @@ var lsCommand = &cobra.Command{
 	Use:   "ls",
 	Short: "List all subcommands",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.ListCommands()
+		err := commands.LS()
+		if err != nil {
+			return
+		}
+	},
+}
+
+var rmCommand = &cobra.Command{
+	Use:   "rm",
+	Short: "Remove a command",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := commands.RemoveSubcommand(commandName)
 		if err != nil {
 			return
 		}
@@ -57,6 +70,8 @@ func init() {
 	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
 	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
 	ascCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
+
+	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
 
 	// Mark flags as required
 	err := ascCommand.MarkFlagRequired("name")

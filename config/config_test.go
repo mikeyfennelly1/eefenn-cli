@@ -17,7 +17,7 @@ var testSubcommands = []subcommand.Subcommand{
 }
 
 func TestReadConfig(t *testing.T) {
-	config, err := ReadConfig()
+	config, err := GetCurrentConfig()
 	if err != nil {
 		return
 	}

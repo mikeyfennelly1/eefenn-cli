@@ -8,7 +8,7 @@ import (
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 func LS() error {
-	config, err := config.ReadConfig()
+	config, err := config.GetCurrentConfig()
 	if err != nil {
 		return err
 	}
