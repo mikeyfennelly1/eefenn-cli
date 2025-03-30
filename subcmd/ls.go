@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 )
 
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 type subcommandData struct {
-	Hash        string `json:"command-hash"`
+	ID          string `json:"command-hash"`
 	Description string `json:"description"`
 	Script      string `json:"script"`
 }
@@ -19,15 +18,36 @@ type Config struct {
 	Test subcommandData `json:"test"`
 }
 
-func (sc *subcommandData) Print() {
-	if sc.Hash == "" {
-		return
+type CommandPrintFormat struct {
+	Name string
+	Hash string
+}
+
+func printHeaders() {
+	headers := []string{"ID", "NAME"}
+	fmt.Printf("%-10s %-20s\n", headers[0], headers[1])
+
+	return
+}
+
+func (cpf *CommandPrintFormat) printCommandLine() {
+	headers := []string{cpf.Hash, cpf.Name}
+	fmt.Printf("%-10s %-20s\n", headers[0], headers[1])
+
+	return
+
+}
+
+func (sc *subcommandData) getPrintFormat() (*CommandPrintFormat, error) {
+	if len(sc.ID) <= 7 {
+		return nil, fmt.Errorf("ID is not long enough to print\n")
 	}
-	var builder strings.Builder
-	builder.WriteString("\t" + sc.Hash[:8])
-	builder.WriteString("\t" + sc.Description)
-	builder.WriteString("\t" + sc.Script + "\n")
-	fmt.Printf(builder.String())
+
+	printFormat := &CommandPrintFormat{
+		Name: "placeholder",
+		Hash: sc.ID[:8],
+	}
+	return printFormat, nil
 }
 
 func ListCommands() error {
@@ -47,7 +67,14 @@ func ListCommands() error {
 	}
 
 	// Print the details of the "test" command
-	config.Test.Print()
+	configAsPrintFormat, err := config.Test.getPrintFormat()
+	if err != nil {
+		return err
+	}
+
+	printHeaders()
+
+	configAsPrintFormat.printCommandLine()
 
 	return nil
 }
