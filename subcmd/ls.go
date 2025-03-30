@@ -1,26 +1,25 @@
 package subcmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
+	"github.com/eefenn/eefenn-cli/config"
 )
 
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
-type subcommandData struct {
-	ID          string `json:"command-hash"`
-	Description string `json:"description"`
-	Script      string `json:"script"`
-}
+func LS() error {
+	config, err := config.ReadConfig()
+	if err != nil {
+		return err
+	}
 
-type Config struct {
-	Test subcommandData `json:"test"`
-}
+	printHeaders()
 
-type CommandPrintFormat struct {
-	Name string
-	Hash string
+	for _, sc := range config.Subcommands {
+		sc.List()
+	}
+
+	return nil
 }
 
 func printHeaders() {
@@ -28,28 +27,4 @@ func printHeaders() {
 	fmt.Printf("%-10s %-20s\n", headers[0], headers[1])
 
 	return
-}
-
-func (cpf *CommandPrintFormat) printCommandLine() {
-	headers := []string{cpf.Hash, cpf.Name}
-	fmt.Printf("%-10s %-20s\n", headers[0], headers[1])
-
-	return
-
-}
-
-func (sc *subcommandData) getPrintFormat() (*CommandPrintFormat, error) {
-	if len(sc.ID) <= 7 {
-		return nil, fmt.Errorf("ID is not long enough to print\n")
-	}
-
-	printFormat := &CommandPrintFormat{
-		Name: "placeholder",
-		Hash: sc.ID[:8],
-	}
-	return printFormat, nil
-}
-
-func ListCommands() error {
-
 }

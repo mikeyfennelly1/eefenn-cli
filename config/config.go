@@ -33,7 +33,7 @@ func writeToConfigFile(updatedConfig []byte) error {
 	return nil
 }
 
-func readConfig() (Config, error) {
+func ReadConfig() (Config, error) {
 	var config Config
 
 	// Open the JSON file
@@ -70,5 +70,5 @@ func (c *Config) getSubCommandByName(name string) Subcommand {
 //
 // Print a subcommand in the format of the ef ls command
 func (sc *Subcommand) List() {
-	
+
 }
