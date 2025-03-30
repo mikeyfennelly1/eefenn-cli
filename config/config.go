@@ -9,8 +9,8 @@ import (
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 type Config struct {
-	RemoteRepoURL string
-	Subcommands   []subcommand.Subcommand
+	RemoteRepoURL string                  `json:"remoteRepoURL"`
+	Subcommands   []subcommand.Subcommand `json:"subcommands"`
 }
 
 // writeToConfigFile
@@ -57,4 +57,18 @@ func (c *Config) getSubCommandByName(name string) subcommand.Subcommand {
 	}
 
 	return c.Subcommands[targetIndex]
+}
+
+func (c *Config) Update() error {
+	jsonData, err := json.MarshalIndent(c, "", "	")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(EefennCLIConfig, jsonData, 0666)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

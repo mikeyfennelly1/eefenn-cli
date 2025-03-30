@@ -1,11 +1,12 @@
 package config
 
 import (
+	"github.com/eefenn/eefenn-cli/subcommand"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-var testSubcommands = []Subcommand{
+var testSubcommands = []subcommand.Subcommand{
 	{
 		Name:        "test",
 		Script:      "test.sh",
