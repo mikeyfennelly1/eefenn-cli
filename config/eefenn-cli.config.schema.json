@@ -6,18 +6,25 @@
         "type": "string"
       },
       "script": {
-        "type": "script"
+        "type": "string"
       },
       "hash": {
         "type": "string",
         "format": "uuid"
       },
-      "required": ["name", "script", "hash"]
+      "description": {
+        "type": "string"
+      },
+      "dateCreated": {
+        "type": "string",
+        "format": "date"
+      },
+      "required": ["name", "script", "hash", "description", "date"]
     }
   },
   "type": "object",
   "properties" : {
-    "remote_repo_url": {
+    "remoteRepoUrl": {
       "type": "string"
     },
     "subcommands": {
@@ -26,6 +33,6 @@
     }
   },
   "required": [
-    "remote_repo_url"
+    "remoteRepoUrl"
   ]
 }
