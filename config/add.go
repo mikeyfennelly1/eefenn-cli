@@ -1,14 +1,16 @@
 package config
 
-import "github.com/eefenn/eefenn-cli/subcommand"
+import (
+	"github.com/eefenn/eefenn-cli/subcommand"
+)
 
 // AddCommand
 //
 // Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled subcommand data.
-func (c *Config) AddCommand(subcommand subcommand.Subcommand) {
+func (c *Config) AddCommand(subcommand subcommand.Subcommand) error {
 	c.Subcommands = append(c.Subcommands, subcommand)
-	return
+	return nil
 }
 
 func (c *Config) getSubCommandByID(hash string) {

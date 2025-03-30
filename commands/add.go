@@ -8,22 +8,24 @@ import (
 )
 
 func Add(subcommand subcommand.Subcommand) error {
-	fmt.Println("getting current config")
-	config, err := config.GetCurrentConfig()
+	currentConfig, err := config.GetCurrentConfig()
 	if err != nil {
 		return err
 	}
-	fmt.Println("Got current config")
 
-	config.AddCommand(subcommand)
-	config.Update()
-	fmt.Println("Added command to config")
+	// check if the command already exists
+	commandHash, err := currentConfig.GetCommandHash(subcommand.Name)
+	if commandHash != nil {
+		return fmt.Errorf("Command already exists.\n")
+	}
+
+	currentConfig.AddCommand(subcommand)
+	currentConfig.Update()
 
 	err = command_dir.CreateSubcommandDirTree(subcommand.Hash)
 	if err != nil {
 		return err
 	}
-	fmt.Println("Created command directory tree")
 
 	return nil
 }

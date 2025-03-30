@@ -37,7 +37,7 @@ var ascCommand = &cobra.Command{
 		thisSubcommand := subcommand.CreateSubCommand(name, file, description)
 		err := commands.Add(thisSubcommand)
 		if err != nil {
-			fmt.Printf("Could not create subcommand %v", err)
+			fmt.Printf("Could not create subcommand: %v", err)
 			return
 		}
 		fmt.Println(thisSubcommand.Hash)
@@ -86,6 +86,11 @@ func init() {
 	if err != nil {
 		return
 	}
+
+	err = rmCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
 }
 
 func main() {
@@ -96,6 +101,8 @@ func main() {
 	rootCmd.AddCommand(ascCommand)
 
 	rootCmd.AddCommand(lsCommand)
+
+	rootCmd.AddCommand(rmCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

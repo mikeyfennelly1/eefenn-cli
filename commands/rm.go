@@ -8,6 +8,7 @@
 package commands
 
 import (
+	"fmt"
 	"github.com/eefenn/eefenn-cli/command_dir"
 	"github.com/eefenn/eefenn-cli/config"
 )
@@ -24,6 +25,10 @@ func RemoveSubcommand(commandName string) error {
 
 	// get the hash code for the command
 	commandHash, err := currentConfig.GetCommandHash(commandName)
+	if commandHash == nil {
+		fmt.Printf("Command '%s does not exist.\n", commandName)
+		return nil
+	}
 	if err != nil {
 		return err
 	}
@@ -42,6 +47,8 @@ func RemoveSubcommand(commandName string) error {
 
 	// update the eefenn-cli.config.json
 	currentConfig.Update()
+
+	fmt.Printf("Removed command: '%s'\n", commandName)
 
 	return nil
 }
