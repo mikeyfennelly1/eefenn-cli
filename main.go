@@ -25,7 +25,8 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-var ascCommand = &cobra.Command{
+// command for adding a subcommand to eefenn-cli
+var addCommand = &cobra.Command{
 	Use:   "add",
 	Short: "Add a subcommand to eefenn-cli",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,6 +46,7 @@ var ascCommand = &cobra.Command{
 	},
 }
 
+// command for listing subcommands in the binary
 var lsCommand = &cobra.Command{
 	Use:   "ls",
 	Short: "List all subcommands",
@@ -56,6 +58,7 @@ var lsCommand = &cobra.Command{
 	},
 }
 
+// command for removing a command
 var rmCommand = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove a command",
@@ -67,6 +70,7 @@ var rmCommand = &cobra.Command{
 	},
 }
 
+// command for running a command
 var runCommand = &cobra.Command{
 	Use:   "run",
 	Short: "Run an eefenn-cli command",
@@ -80,6 +84,7 @@ var runCommand = &cobra.Command{
 	},
 }
 
+// command for editing an existing command's script
 var editCommand = &cobra.Command{
 	Use:   "edit",
 	Short: "Edit the script for a command.",
@@ -94,6 +99,7 @@ var editCommand = &cobra.Command{
 	},
 }
 
+// command for committing an edited script to a command
 var commitCommand = &cobra.Command{
 	Use:   "commit",
 	Short: "Commit an edited script to a command.",
@@ -105,6 +111,7 @@ var commitCommand = &cobra.Command{
 	},
 }
 
+// command for printing the description of an existing command
 var describeCommand = &cobra.Command{
 	Use:   "describe",
 	Short: "Print the description of a command.",
@@ -117,73 +124,78 @@ var describeCommand = &cobra.Command{
 }
 
 func init() {
-	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
-	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
-	ascCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
+	// add flags to the 'ef add' command
+	addCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
+	addCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
+	addCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
+	// specify required flags for the 'ef add' command
+	err := addCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+	err = addCommand.MarkFlagRequired("file")
+	if err != nil {
+		return
+	}
+	err = addCommand.MarkFlagRequired("description")
+	if err != nil {
+		return
+	}
 
+	// add flags to the 'ef rm' command
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
-
-	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
-
-	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
-
-	editCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to edit.")
-
-	commitCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to commit.")
-	commitCommand.Flags().StringVarP(&commandName, "message", "m", "", "The commit message for the commit.")
-
-	// Mark flags as required
-	err := ascCommand.MarkFlagRequired("name")
-	if err != nil {
-		return
-	}
-	err = ascCommand.MarkFlagRequired("file")
-	if err != nil {
-		return
-	}
-	err = ascCommand.MarkFlagRequired("description")
-	if err != nil {
-		return
-	}
 	err = rmCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
+
+	// add flags to the 'ef run' command
+	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
 	err = describeCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
+
+	// add flags to the 'ef describe' command
+	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
+	err = describeCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+	// add flags to the 'ef edit' command
+	editCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to edit.")
 	err = editCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
-	err = editCommand.MarkFlagRequired("name")
+
+	// add flags to the 'ef commit' command
+	commitCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to commit.")
+	commitCommand.Flags().StringVarP(&commandName, "message", "m", "", "The commit message for the commit.")
+	err = commitCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
-	err = editCommand.MarkFlagRequired("message")
+	err = commitCommand.MarkFlagRequired("message")
 	if err != nil {
 		return
 	}
 }
 
 func main() {
+	// ensure that binary is running with root permissions before running
 	if os.Geteuid() != 0 {
 		fmt.Println("You must be superuser to run this binary.")
 		return
 	}
-	rootCmd.AddCommand(ascCommand)
 
+	// add commands to root command
+	rootCmd.AddCommand(addCommand)
 	rootCmd.AddCommand(lsCommand)
-
 	rootCmd.AddCommand(rmCommand)
-
 	rootCmd.AddCommand(runCommand)
-
 	rootCmd.AddCommand(describeCommand)
-
 	rootCmd.AddCommand(editCommand)
-
 	rootCmd.AddCommand(commitCommand)
 
 	if err := rootCmd.Execute(); err != nil {
