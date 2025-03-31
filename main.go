@@ -124,6 +124,18 @@ var describeCommand = &cobra.Command{
 	},
 }
 
+// command for printing the description of an existing command
+var addDescriptionCommand = &cobra.Command{
+	Use:   "add-description",
+	Short: "Add description to the command",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := commands.AddDescription(commandName, description)
+		if err != nil {
+			fmt.Printf("Could not add description: %v\n", err)
+		}
+	},
+}
+
 func init() {
 	// add flags to the 'ef add' command
 	addCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
@@ -143,6 +155,9 @@ func init() {
 	// add flags to the 'ef commit' command
 	commitCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to commit.")
 	commitCommand.Flags().StringVarP(&commitMessage, "message", "m", "", "The commit message for the commit.")
+
+	// add flags to the 'ef commit' command
+	addDescriptionCommand.Flags().StringVarP(&description, "new-description", "nd", "", "The new description that you want to add.")
 }
 
 func main() {
@@ -194,6 +209,12 @@ func main() {
 		return
 	}
 	err = commitCommand.MarkFlagRequired("message")
+	if err != nil {
+		return
+	}
+
+	rootCmd.AddCommand(addDescriptionCommand)
+	err = commitCommand.MarkFlagRequired("new-description")
 	if err != nil {
 		return
 	}

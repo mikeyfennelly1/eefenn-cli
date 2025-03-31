@@ -9,6 +9,9 @@ import (
 func Run(commandName string, commandArgs []string) ([]byte, error) {
 	// get the absolute path to the script
 	scriptPath, err := utils.GetSubcommandShellFileAbsPath(commandName)
+	if err != nil {
+		return nil, err
+	}
 
 	// create a command object from the script
 	cmd := exec.Command("sh", append([]string{*scriptPath}, commandArgs...)...)
