@@ -30,6 +30,9 @@ type Parameter struct {
 	Description string `json:"description"`
 }
 
+// HasParameters
+//
+// check if a subcommand has parameters
 func (sc *Subcommand) HasParameters() bool {
 	if len(sc.Parameters) != 0 {
 		return true
