@@ -21,7 +21,7 @@ var rootCmd = &cobra.Command{
 	Use:   "ef", // The name of the command
 	Short: "A command line tool for automating web application tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Usage: ef <subcommand>")
+		cmd.Help()
 	},
 }
 
