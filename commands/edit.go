@@ -2,39 +2,32 @@ package commands
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/command_dir"
-	"github.com/eefenn/eefenn-cli/config"
+	"github.com/eefenn/eefenn-cli/utils"
 	"os"
 )
 
+// Edit
+//
+// Copies the current script of the command into users pwd.
+// user can then make changes to this script and commit these
+// to the command via 'ef commit'
 func Edit(commandName string) error {
-	currentConfig, err := config.GetCurrentConfig()
+	scriptContents, err := utils.GetScriptContents(commandName)
 	if err != nil {
 		return err
 	}
 
-	commandHash, err := currentConfig.GetCommandHash(commandName)
-	if err != nil {
-		return err
-	}
-	// get the path to the shell script for the current version of the command
-	scriptPath := command_dir.GetSubcommandShellFileAbsPath(*commandHash)
-
+	// get the pwd of where the edit command was ran
 	pwd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
 	editFilePath := fmt.Sprintf(pwd + "/" + commandName + ".sh")
+	// create the file to copy the current script contents to
 	os.Create(editFilePath)
 
-	// get the content of the script of current version of the command
-	currentScriptContent, err := os.ReadFile(scriptPath)
-	if err != nil {
-		return err
-	}
-
 	// write the content of the current script into the newly created file
-	err = os.WriteFile(editFilePath, currentScriptContent, 0666)
+	err = os.WriteFile(editFilePath, scriptContents, 0666)
 	if err != nil {
 		return err
 	}

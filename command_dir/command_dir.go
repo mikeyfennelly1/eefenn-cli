@@ -2,6 +2,7 @@ package command_dir
 
 import (
 	"fmt"
+	"github.com/eefenn/eefenn-cli/utils"
 	"os"
 )
 
@@ -58,26 +59,18 @@ func GetSubcommandDependenciesDirectory(commandHash string) string {
 //
 // Create an empty shell file of the name <command-hash>.sh
 func CreateEmptySubcommandShellFile(commandHash string) (*os.File, error) {
-	fileName := GetSubcommandShellFileAbsPath(commandHash)
+	fileName, err := utils.GetSubcommandShellFileAbsPath(commandHash)
+	if err != nil {
+		return nil, err
+	}
 
 	// create the file
-	file, err := os.Create(fileName)
+	file, err := os.Create(*fileName)
 	if err != nil {
 		return nil, err
 	}
 
 	return file, nil
-}
-
-// GetSubcommandShellFileAbsPath
-//
-// Get the absolute path to the shell script for the command
-// based on commandHash
-func GetSubcommandShellFileAbsPath(commandHash string) string {
-	// create '<command-hash>.sh' filename string
-	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandHash, commandHash)
-
-	return fileName
 }
 
 // RemoveCommandDirectoryRecursively

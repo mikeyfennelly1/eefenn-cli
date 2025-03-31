@@ -2,9 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/command_dir"
-	"github.com/eefenn/eefenn-cli/config"
-	"os"
+	"github.com/eefenn/eefenn-cli/utils"
 )
 
 // Cat
@@ -12,23 +10,14 @@ import (
 // print the contents of the script file that the command
 // is an alias for
 func Cat(commandName string) error {
-	currentConfig, err := config.GetCurrentConfig()
+	// get the contents of the commands script
+	scriptContents, err := utils.GetScriptContents(commandName)
 	if err != nil {
 		return err
 	}
 
-	hash, err := currentConfig.GetCommandHash(commandName)
-	if err != nil {
-		return err
-	}
-
-	scriptAbsPath := command_dir.GetSubcommandShellFileAbsPath(*hash)
-	scriptContents, err := os.ReadFile(scriptAbsPath)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf(string(scriptContents))
+	// print the contents
+	fmt.Printf("%s\n", string(scriptContents))
 
 	return nil
 }

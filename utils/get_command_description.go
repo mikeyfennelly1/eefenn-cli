@@ -1,9 +1,12 @@
-package config
+package utils
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/eefenn/eefenn-cli/config"
+)
 
 func GetCommandDescription(commandName string) (*string, error) {
-	currentConfig, err := GetCurrentConfig()
+	currentConfig, err := config.GetCurrentConfig()
 	if err != nil {
 		return nil, err
 	}
