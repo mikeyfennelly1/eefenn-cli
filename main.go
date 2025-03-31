@@ -79,6 +79,18 @@ var runCommand = &cobra.Command{
 	},
 }
 
+var describeCommand = &cobra.Command{
+	Use:   "describe",
+	Short: "Print the description of a command.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := commands.Describe(commandName)
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
+
+	},
+}
+
 func init() {
 	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
 	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
@@ -87,6 +99,8 @@ func init() {
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
 
 	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
+
+	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
 
 	// Mark flags as required
 	err := ascCommand.MarkFlagRequired("name")
@@ -120,6 +134,8 @@ func main() {
 	rootCmd.AddCommand(rmCommand)
 
 	rootCmd.AddCommand(runCommand)
+
+	rootCmd.AddCommand(describeCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
