@@ -2,13 +2,13 @@ package config
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/subcommand"
+	"github.com/eefenn/eefenn-cli/cmd-config"
 )
 
 // AddParam
 //
 // add a parameter to a command
-func AddParam(commandName string, p subcommand.Parameter) error {
+func AddParam(commandName string, p cmd_config.Parameter) error {
 	// get the current config
 	currentConfig, err := GetCurrentConfig()
 	if err != nil {

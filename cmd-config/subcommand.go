@@ -1,4 +1,4 @@
-package subcommand
+package cmd_config
 
 import (
 	"fmt"

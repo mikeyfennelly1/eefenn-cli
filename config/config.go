@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/eefenn/eefenn-cli/subcommand"
+	"github.com/eefenn/eefenn-cli/cmd-config"
 	"os"
 )
 
@@ -10,7 +10,7 @@ const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 type Config struct {
 	RemoteRepoURL string                  `json:"remoteRepoURL"`
-	Subcommands   []subcommand.Subcommand `json:"subcommands"`
+	Subcommands   []cmd_config.Subcommand `json:"subcommands"`
 }
 
 // writeToConfigFile
@@ -46,7 +46,7 @@ func GetCurrentConfig() (Config, error) {
 	return config, nil
 }
 
-func (c *Config) getSubCommandByName(name string) subcommand.Subcommand {
+func (c *Config) getSubCommandByName(name string) cmd_config.Subcommand {
 	var targetIndex int
 
 	// find the index of the item whose Name matches the parameter 'name'

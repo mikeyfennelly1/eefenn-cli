@@ -1,14 +1,14 @@
 package config
 
 import (
-	"github.com/eefenn/eefenn-cli/subcommand"
+	"github.com/eefenn/eefenn-cli/cmd-config"
 )
 
 // AddCommand
 //
 // Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled subcommand data.
-func (c *Config) AddCommand(subcommand subcommand.Subcommand) error {
+func (c *Config) AddCommand(subcommand cmd_config.Subcommand) error {
 	c.Subcommands = append(c.Subcommands, subcommand)
 	return nil
 }

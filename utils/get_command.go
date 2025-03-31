@@ -2,8 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/eefenn/eefenn-cli/config"
-	"github.com/eefenn/eefenn-cli/subcommand"
 )
 
 // GetCommand
@@ -14,7 +14,7 @@ import (
 // - ptr to index of the commmand
 // - ptr to the Subcommand structure for the command
 // - error status
-func GetCommand(commandName string) (*int, *subcommand.Subcommand, error) {
+func GetCommand(commandName string) (*int, *cmd_config.Subcommand, error) {
 	currentConfig, err := config.GetCurrentConfig()
 	if err != nil {
 		return nil, nil, err

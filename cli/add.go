@@ -1,14 +1,14 @@
-package commands
+package cli
 
 import (
 	"fmt"
+	"github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/eefenn/eefenn-cli/command_dir"
 	"github.com/eefenn/eefenn-cli/config"
-	"github.com/eefenn/eefenn-cli/subcommand"
 	"github.com/eefenn/eefenn-cli/utils"
 )
 
-func Add(subcommand subcommand.Subcommand) error {
+func Add(subcommand cmd_config.Subcommand) error {
 	// if the command already exists, return an error
 	if utils.CommandExists(subcommand.Name) {
 		return fmt.Errorf("Command already exists.\n")

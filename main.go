@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/commands"
-	"github.com/eefenn/eefenn-cli/subcommand"
+	"github.com/eefenn/eefenn-cli/cli"
+	"github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -36,8 +36,8 @@ var addCommand = &cobra.Command{
 			return
 		}
 
-		thisSubcommand := subcommand.CreateSubCommand(name, file, description)
-		err := commands.Add(thisSubcommand)
+		thisSubcommand := cmd_config.CreateSubCommand(name, file, description)
+		err := cli.Add(thisSubcommand)
 		if err != nil {
 			fmt.Printf("Could not create subcommand: %v", err)
 			return
@@ -51,7 +51,7 @@ var lsCommand = &cobra.Command{
 	Use:   "ls",
 	Short: "List all subcommands",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.LS()
+		err := cli.LS()
 		if err != nil {
 			return
 		}
@@ -63,7 +63,7 @@ var rmCommand = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove a command",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.RemoveSubcommand(commandName)
+		err := cli.RemoveSubcommand(commandName)
 		if err != nil {
 			return
 		}
@@ -75,7 +75,7 @@ var runCommand = &cobra.Command{
 	Use:   "run",
 	Short: "Run an eefenn-cli command",
 	Run: func(cmd *cobra.Command, args []string) {
-		result, err := commands.Run(commandName, args)
+		result, err := cli.Run(commandName, args)
 		if err != nil {
 			fmt.Printf("Unable to run command '%s': %v\n", commandName, err)
 		}
@@ -89,7 +89,7 @@ var editCommand = &cobra.Command{
 	Use:   "edit",
 	Short: "Edit the script for a command.",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.Edit(commandName)
+		err := cli.Edit(commandName)
 		if err != nil {
 			fmt.Printf("Unable to edit command '%s': %v\n", commandName, err)
 			return
@@ -105,7 +105,7 @@ var commitCommand = &cobra.Command{
 	Use:   "commit",
 	Short: "Commit an edited script to a command.",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.Commit(commandName, commitMessage)
+		err := cli.Commit(commandName, commitMessage)
 		if err != nil {
 			fmt.Printf("Unable to edit command '%s': %v\n", commandName, err)
 		}
@@ -117,7 +117,7 @@ var describeCommand = &cobra.Command{
 	Use:   "describe",
 	Short: "Print the description of a command.",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.Describe(commandName)
+		err := cli.Describe(commandName)
 		if err != nil {
 			fmt.Printf("%v", err)
 		}
@@ -129,7 +129,7 @@ var addDescriptionCommand = &cobra.Command{
 	Use:   "add-description",
 	Short: "Add description to the command",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.AddDescription(commandName, description)
+		err := cli.AddDescription(commandName, description)
 		if err != nil {
 			fmt.Printf("Could not add description: %v\n", err)
 		}

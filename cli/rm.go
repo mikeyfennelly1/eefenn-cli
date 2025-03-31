@@ -5,7 +5,7 @@
 //
 // @author Mikey Fennelly
 
-package commands
+package cli
 
 import (
 	"fmt"

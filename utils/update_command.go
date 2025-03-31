@@ -1,11 +1,11 @@
 package utils
 
 import (
+	"github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/eefenn/eefenn-cli/config"
-	"github.com/eefenn/eefenn-cli/subcommand"
 )
 
-func ReplaceCommand(commandToReplace string, newCommand subcommand.Subcommand) error {
+func ReplaceCommand(commandToReplace string, newCommand cmd_config.Subcommand) error {
 	// get the index of the command that you want to replace
 	replaceTargetIndex, _, err := GetCommand(commandToReplace)
 	if err != nil {

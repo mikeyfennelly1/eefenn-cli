@@ -2,10 +2,10 @@ package config
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/subcommand"
+	"github.com/eefenn/eefenn-cli/cmd-config"
 )
 
-func GetCommandParams(commandName string) ([]subcommand.Parameter, error) {
+func GetCommandParams(commandName string) ([]cmd_config.Parameter, error) {
 	currentConfig, err := GetCurrentConfig()
 	if err != nil {
 		return nil, err

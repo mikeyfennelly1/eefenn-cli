@@ -1,11 +1,11 @@
-package commands
+package cli
 
 import (
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-func TestEdit(t *testing.T) {
-	err := Edit("create-next-component")
+func TestCat(t *testing.T) {
+	err := Cat("echo-hello")
 	require.NoError(t, err)
 }
