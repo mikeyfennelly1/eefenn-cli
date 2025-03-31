@@ -18,7 +18,11 @@ type Subcommand struct {
 	// description for what the script does
 	Description string `json:"desc,omitempty"`
 
+	// the date that the command was updated
 	DateCreated string `json:"dateCreated"`
+
+	// parameters for the command
+	Parameters []string `json:"parameters"`
 }
 
 // List

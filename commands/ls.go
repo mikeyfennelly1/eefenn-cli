@@ -24,7 +24,7 @@ func LS() error {
 
 func printHeaders() {
 	headers := []string{"ID", "NAME"}
-	fmt.Printf("%-10s %-10s %-20s\n", headers[0], headers[1])
+	fmt.Printf("%-10s %-10s\n", headers[0], headers[1])
 
 	return
 }

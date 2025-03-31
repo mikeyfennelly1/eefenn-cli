@@ -7,7 +7,7 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	output, err := Run("echo-hello")
+	output, err := Run("echo-hello", nil)
 	fmt.Printf(string(output) + "\n")
 	require.NoError(t, err)
 }

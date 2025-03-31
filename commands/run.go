@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-func Run(commandName string) ([]byte, error) {
+func Run(commandName string, commandArgs []string) ([]byte, error) {
 	// get the current config
 	currentConfig, err := config.GetCurrentConfig()
 	if err != nil {
@@ -25,7 +25,7 @@ func Run(commandName string) ([]byte, error) {
 	scriptPath := command_dir.GetSubcommandShellFileAbsPath(*hash)
 
 	// create a command object from the script
-	cmd := exec.Command("sh", scriptPath)
+	cmd := exec.Command("sh", append([]string{scriptPath}, commandArgs...)...)
 
 	// run the command
 	output, err := cmd.CombinedOutput()

@@ -11,6 +11,6 @@ func Describe(commandName string) error {
 		return err
 	}
 
-	fmt.Printf(*description)
+	fmt.Printf("%s\n", *description)
 	return nil
 }

@@ -9,10 +9,11 @@ import (
 )
 
 var (
-	file        string
-	name        string
-	description string
-	commandName string
+	file          string
+	name          string
+	description   string
+	commandName   string
+	commitMessage string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -70,12 +71,37 @@ var runCommand = &cobra.Command{
 	Use:   "run",
 	Short: "Run an eefenn-cli command",
 	Run: func(cmd *cobra.Command, args []string) {
-		result, err := commands.Run(commandName)
+		result, err := commands.Run(commandName, args)
 		if err != nil {
 			fmt.Printf("Unable to run command '%s': %v\n", commandName, err)
 		}
 
 		fmt.Printf(string(result))
+	},
+}
+
+var editCommand = &cobra.Command{
+	Use:   "edit",
+	Short: "Edit the script for a command.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := commands.Edit(commandName)
+		if err != nil {
+			fmt.Printf("Unable to edit command '%s': %v\n", commandName, err)
+		}
+
+		fmt.Printf("Created file to edit: %s.sh\n", commandName)
+		fmt.Println("Edit the script, and use the 'commit' command to update the command")
+	},
+}
+
+var commitCommand = &cobra.Command{
+	Use:   "commit",
+	Short: "Commit an edited script to a command.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := commands.Commit(commandName, commitMessage)
+		if err != nil {
+			fmt.Printf("Unable to edit command '%s': %v\n", commandName, err)
+		}
 	},
 }
 
@@ -87,7 +113,6 @@ var describeCommand = &cobra.Command{
 		if err != nil {
 			fmt.Printf("%v", err)
 		}
-
 	},
 }
 
@@ -102,6 +127,11 @@ func init() {
 
 	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
 
+	editCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to edit.")
+
+	commitCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to commit.")
+	commitCommand.Flags().StringVarP(&commandName, "message", "m", "", "The commit message for the commit.")
+
 	// Mark flags as required
 	err := ascCommand.MarkFlagRequired("name")
 	if err != nil {
@@ -115,8 +145,23 @@ func init() {
 	if err != nil {
 		return
 	}
-
 	err = rmCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+	err = describeCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+	err = editCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+	err = editCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+	err = editCommand.MarkFlagRequired("message")
 	if err != nil {
 		return
 	}
@@ -136,6 +181,10 @@ func main() {
 	rootCmd.AddCommand(runCommand)
 
 	rootCmd.AddCommand(describeCommand)
+
+	rootCmd.AddCommand(editCommand)
+
+	rootCmd.AddCommand(commitCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
