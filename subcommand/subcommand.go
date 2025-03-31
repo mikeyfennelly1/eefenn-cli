@@ -25,7 +25,7 @@ type Subcommand struct {
 //
 // Print a subcommand in the format of the ef ls command
 func (sc *Subcommand) List() {
-	fmt.Printf("%-10s %-10s %-20s\n", sc.Hash[:8], sc.Name, sc.Description)
+	fmt.Printf("%-10s %-10s\n", sc.Hash[:8], sc.Name)
 }
 
 func (sc *Subcommand) getSubcommandId() string {

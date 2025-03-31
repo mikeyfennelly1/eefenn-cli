@@ -66,12 +66,27 @@ var rmCommand = &cobra.Command{
 	},
 }
 
+var runCommand = &cobra.Command{
+	Use:   "run",
+	Short: "Run an eefenn-cli command",
+	Run: func(cmd *cobra.Command, args []string) {
+		result, err := commands.Run(commandName)
+		if err != nil {
+			fmt.Printf("Unable to run command '%s': %v\n", commandName, err)
+		}
+
+		fmt.Printf(string(result))
+	},
+}
+
 func init() {
 	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
 	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
 	ascCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
 
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
+
+	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
 
 	// Mark flags as required
 	err := ascCommand.MarkFlagRequired("name")
@@ -103,6 +118,8 @@ func main() {
 	rootCmd.AddCommand(lsCommand)
 
 	rootCmd.AddCommand(rmCommand)
+
+	rootCmd.AddCommand(runCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
