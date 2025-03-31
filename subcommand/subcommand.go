@@ -22,14 +22,33 @@ type Subcommand struct {
 	DateCreated string `json:"dateCreated"`
 
 	// parameters for the command
-	Parameters []string `json:"parameters"`
+	Parameters []Parameter `json:"parameters"`
+}
+
+type Parameter struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+func (sc *Subcommand) HasParameters() bool {
+	if len(sc.Parameters) != 0 {
+		return true
+	} else {
+		return false
+	}
 }
 
 // List
 //
 // Print a subcommand in the format of the ef ls command
 func (sc *Subcommand) List() {
-	fmt.Printf("%-10s %-10s\n", sc.Hash[:8], sc.Name)
+	var hasParamsString string
+	if sc.HasParameters() {
+		hasParamsString = "true"
+	} else {
+		hasParamsString = "false"
+	}
+	fmt.Printf("%-10s %-30s %-30s\n", sc.Hash[:8], sc.Name, hasParamsString)
 }
 
 func (sc *Subcommand) getSubcommandId() string {
@@ -40,12 +59,15 @@ func (sc *Subcommand) getSubcommandId() string {
 //
 // Create a Subcommand struct based on required command information
 func CreateSubCommand(name string, sourceScriptName string, description string) Subcommand {
+	// parameter are initially empty
+	params := []Parameter{}
 	UUID := uuid.New().String()
 	subCommand := Subcommand{
 		Name:        name,
 		Hash:        UUID,
 		Script:      sourceScriptName,
 		Description: description,
+		Parameters:  params,
 	}
 	return subCommand
 }
