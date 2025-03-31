@@ -92,6 +92,7 @@ var editCommand = &cobra.Command{
 		err := commands.Edit(commandName)
 		if err != nil {
 			fmt.Printf("Unable to edit command '%s': %v\n", commandName, err)
+			return
 		}
 
 		fmt.Printf("Created file to edit: %s.sh\n", commandName)
@@ -128,6 +129,31 @@ func init() {
 	addCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
 	addCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
 	addCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
+	// add flags to the 'ef rm' command
+	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
+	// add flags to the 'ef run' command
+	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
+
+	// add flags to the 'ef edit' command
+	editCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to edit.")
+
+	// add flags to the 'ef describe' command
+	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
+
+	// add flags to the 'ef commit' command
+	commitCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to commit.")
+	commitCommand.Flags().StringVarP(&commitMessage, "message", "m", "", "The commit message for the commit.")
+}
+
+func main() {
+	// ensure that binary is running with root permissions before running
+	if os.Geteuid() != 0 {
+		fmt.Println("You must be superuser to run this binary.")
+		return
+	}
+
+	// add commands to root command
+	rootCmd.AddCommand(addCommand)
 	// specify required flags for the 'ef add' command
 	err := addCommand.MarkFlagRequired("name")
 	if err != nil {
@@ -142,36 +168,27 @@ func init() {
 		return
 	}
 
-	// add flags to the 'ef rm' command
-	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
+	rootCmd.AddCommand(lsCommand)
+	rootCmd.AddCommand(rmCommand)
 	err = rmCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
 
-	// add flags to the 'ef run' command
-	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
+	rootCmd.AddCommand(runCommand)
+	rootCmd.AddCommand(describeCommand)
 	err = describeCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
 
-	// add flags to the 'ef describe' command
-	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
-	err = describeCommand.MarkFlagRequired("name")
-	if err != nil {
-		return
-	}
-	// add flags to the 'ef edit' command
-	editCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to edit.")
+	rootCmd.AddCommand(editCommand)
 	err = editCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
 
-	// add flags to the 'ef commit' command
-	commitCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to commit.")
-	commitCommand.Flags().StringVarP(&commandName, "message", "m", "", "The commit message for the commit.")
+	rootCmd.AddCommand(commitCommand)
 	err = commitCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
@@ -180,23 +197,6 @@ func init() {
 	if err != nil {
 		return
 	}
-}
-
-func main() {
-	// ensure that binary is running with root permissions before running
-	if os.Geteuid() != 0 {
-		fmt.Println("You must be superuser to run this binary.")
-		return
-	}
-
-	// add commands to root command
-	rootCmd.AddCommand(addCommand)
-	rootCmd.AddCommand(lsCommand)
-	rootCmd.AddCommand(rmCommand)
-	rootCmd.AddCommand(runCommand)
-	rootCmd.AddCommand(describeCommand)
-	rootCmd.AddCommand(editCommand)
-	rootCmd.AddCommand(commitCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

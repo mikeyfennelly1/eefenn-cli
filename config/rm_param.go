@@ -13,10 +13,14 @@ func RmParam(commandName string, parameterName string) error {
 		return err
 	}
 
+	// find the command with name=commandName
 	for subcommandIndex, sc := range currentConfig.Subcommands {
 		if sc.Name == commandName {
+			// find the parameter of the command if there is one,
+			// where parameter.name == parameterName
 			for index, p := range sc.Parameters {
 				if p.Name == parameterName {
+					// update the config
 					currentConfig.Subcommands[subcommandIndex].Parameters = append(sc.Parameters[:index], sc.Parameters[index+1:]...)
 				}
 				currentConfig.Update()
