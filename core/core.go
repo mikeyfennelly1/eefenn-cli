@@ -12,11 +12,27 @@ import (
 	"github.com/eefenn/eefenn-cli/core/config"
 )
 
+func GetCore() (*Core, error) {
+	config, err := config.GetCurrentConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	var edt command_dir.EefennCLIDirectoryTree
+
+	current_core := Core{
+		Config:        config,
+		DirectoryTree: edt,
+	}
+
+	return &current_core, nil
+}
+
 type CoreInterface interface {
-	// CommitCommand
+	// Commit
 	//
 	// Add/'commit' a command to core.
-	CommitCommand(command cmd.Command)
+	Commit(command cmd.Command)
 
 	// GetCommandByName
 	//
@@ -53,8 +69,15 @@ type Core struct {
 // Commit
 //
 // Add/'commit' a command to core.
-func (c *Core) Commit(command cmd.Command) {
+func (c *Core) Commit(command cmd.Command) error {
+	var edt command_dir.EefennCLIDirectoryTree
 
+	err := edt.CreateCommandDirTree(command)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Core) GetCommands() []cmd.Command {

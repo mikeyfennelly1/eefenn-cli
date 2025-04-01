@@ -5,8 +5,6 @@ import (
 	"github.com/eefenn/eefenn-cli/core/config"
 )
 
-const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
-
 func LS() error {
 	config, err := config.GetCurrentConfig()
 	if err != nil {

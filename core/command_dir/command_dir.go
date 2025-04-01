@@ -30,12 +30,7 @@ type EefennCLIDirectoryTreeInterface interface {
 	// CreateSubcommandDirTree
 	//
 	// Create an entry in /usr/lib/eefenn-cli for the Subcommand.
-	CreateSubcommandDirTree(cmd cmd_config.Command) error
-
-	// CreateEmptySubcommandShellFile
-	//
-	// Create an empty shell file of the name <command-hash>.sh
-	CreateEmptySubcommandShellFile(cmd cmd_config.Command) (*os.File, error)
+	CreateCommandDirTree(cmd cmd_config.Command) error
 
 	// RemoveCommandDirectoryRecursively
 	//
@@ -48,7 +43,7 @@ type EefennCLIDirectoryTree struct{}
 // CreateSubcommandDirTree
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
-func (edt *EefennCLIDirectoryTree) CreateSubcommandDirTree(cmd cmd_config.Command) error {
+func (edt *EefennCLIDirectoryTree) CreateCommandDirTree(cmd cmd_config.Command) error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("You must have root permissions to perform changes to CLI core\n")
 	}
@@ -61,7 +56,7 @@ func (edt *EefennCLIDirectoryTree) CreateSubcommandDirTree(cmd cmd_config.Comman
 	}
 
 	// create a blank command script
-	blankFile, err := edt.CreateEmptySubcommandShellFile(cmd)
+	blankFile, err := edt.createEmptySubcommandShellFile(cmd)
 	if err != nil {
 		return fmt.Errorf("Could not create empty Subcommand .sh file\n")
 	}
@@ -78,7 +73,7 @@ func (edt *EefennCLIDirectoryTree) CreateSubcommandDirTree(cmd cmd_config.Comman
 // CreateEmptySubcommandShellFile
 //
 // Create an empty shell file of the name <command-hash>.sh
-func (edt *EefennCLIDirectoryTree) CreateEmptySubcommandShellFile(cmd cmd_config.Command) (*os.File, error) {
+func (edt *EefennCLIDirectoryTree) createEmptySubcommandShellFile(cmd cmd_config.Command) (*os.File, error) {
 	fileName := getSubcommandShellFileAbsPath(cmd.Name)
 
 	// create the file
@@ -114,7 +109,7 @@ func (edt *EefennCLIDirectoryTree) CopyScriptToCommandDirectory(cmd cmd_config.C
 	}
 	defer sourceFile.Close()
 
-	destinationFile, err := edt.CreateEmptySubcommandShellFile(cmd)
+	destinationFile, err := edt.createEmptySubcommandShellFile(cmd)
 	if err != nil {
 		return err
 	}

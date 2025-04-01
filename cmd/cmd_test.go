@@ -5,5 +5,5 @@ import (
 )
 
 func TestGetCommandFromYml(t *testing.T) {
-	GetCommandFromYml("config.yaml")
+	ParseCommandFromYaml("config.yaml")
 }
