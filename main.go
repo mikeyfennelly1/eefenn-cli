@@ -28,7 +28,7 @@ var commitCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := cli.Commit()
 		if err != nil {
-			fmt.Printf("Unable to commit command '%s': %v\n", commandName, err)
+			fmt.Printf("Unable to commit command: %v\n", err)
 		}
 	},
 }
