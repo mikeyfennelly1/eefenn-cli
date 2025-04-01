@@ -8,7 +8,7 @@ package command_dir
 
 import (
 	"fmt"
-	cmd_config "github.com/eefenn/eefenn-cli/yaml"
+	cmd_config "github.com/eefenn/eefenn-cli/cmd"
 	"io"
 	"os"
 )

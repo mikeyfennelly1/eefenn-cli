@@ -1,7 +1,7 @@
 package cli
 
 import (
-	cmd_config "github.com/eefenn/eefenn-cli/yaml"
+	cmd_config "github.com/eefenn/eefenn-cli/cmd"
 	"testing"
 )
 

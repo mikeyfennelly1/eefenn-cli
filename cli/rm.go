@@ -36,7 +36,7 @@ func RemoveSubcommand(commandName string) error {
 	}
 
 	// update the eefenn-cli.config.json
-	currentConfig.Update()
+	currentConfig.update()
 
 	fmt.Printf("Removed command: '%s'\n", commandName)
 

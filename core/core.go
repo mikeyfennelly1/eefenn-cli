@@ -1,27 +1,33 @@
+// core.go
+//
+// Core is essentially the management system for commands, and their files.
+//
+// Author: Mikey Fennelly
+
 package core
 
 import (
+	cmd "github.com/eefenn/eefenn-cli/cmd"
 	"github.com/eefenn/eefenn-cli/core/command_dir"
 	"github.com/eefenn/eefenn-cli/core/config"
-	cmd_config "github.com/eefenn/eefenn-cli/yaml"
 )
 
 type CoreInterface interface {
 	// CommitCommand
 	//
 	// Add/'commit' a command to core.
-	CommitCommand(command cmd_config.Command)
+	CommitCommand(command cmd.Command)
 
 	// GetCommandByName
 	//
 	// Get a Command object for a command, using the name of the command as
 	// a parameter.
-	GetCommandByName(commandName string) (cmd_config.Command, error)
+	GetCommandByName(commandName string) (cmd.Command, error)
 
 	// GetALlCommands
 	//
 	// Get all commands in the current core state.
-	GetALlCommands() []cmd_config.Command
+	GetALlCommands() []cmd.Command
 
 	// RemoveCommandByName
 	//
@@ -47,10 +53,10 @@ type Core struct {
 // Commit
 //
 // Add/'commit' a command to core.
-func (c *Core) Commit(command cmd_config.Command) {
+func (c *Core) Commit(command cmd.Command) {
 
 }
 
-func (c *Core) GetCommands() []cmd_config.Command {
+func (c *Core) GetCommands() []cmd.Command {
 	return nil
 }

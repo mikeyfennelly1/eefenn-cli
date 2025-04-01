@@ -2,8 +2,8 @@ package core_utils
 
 import (
 	"fmt"
+	"github.com/eefenn/eefenn-cli/cmd"
 	"github.com/eefenn/eefenn-cli/core/config"
-	"github.com/eefenn/eefenn-cli/yaml"
 )
 
 // GetCommand
@@ -14,7 +14,7 @@ import (
 // - ptr to index of the commmand
 // - ptr to the Subcommand structure for the command
 // - error status
-func GetCommand(commandName string) (*int, *yaml.Command, error) {
+func GetCommand(commandName string) (*int, *cmd.Command, error) {
 	currentConfig, err := config.GetCurrentConfig()
 	if err != nil {
 		return nil, nil, err
