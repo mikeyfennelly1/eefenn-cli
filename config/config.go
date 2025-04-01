@@ -9,8 +9,8 @@ import (
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 type Config struct {
-	RemoteRepoURL string                  `json:"remoteRepoURL"`
-	Subcommands   []cmd_config.Subcommand `json:"subcommands"`
+	RemoteRepoURL string               `json:"remoteRepoURL"`
+	commands      []cmd_config.Command `json:"subcommands"`
 }
 
 // writeToConfigFile
@@ -46,17 +46,17 @@ func GetCurrentConfig() (Config, error) {
 	return config, nil
 }
 
-func (c *Config) getSubCommandByName(name string) cmd_config.Subcommand {
+func (c *Config) getSubCommandByName(name string) cmd_config.Command {
 	var targetIndex int
 
 	// find the index of the item whose Name matches the parameter 'name'
-	for index, sc := range c.Subcommands {
+	for index, sc := range c.commands {
 		if sc.Name == name {
 			targetIndex = index
 		}
 	}
 
-	return c.Subcommands[targetIndex]
+	return c.commands[targetIndex]
 }
 
 func (c *Config) Update() error {
