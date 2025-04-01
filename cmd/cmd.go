@@ -1,11 +1,5 @@
 package cmd
 
-import (
-	"fmt"
-	"gopkg.in/yaml.v3"
-	"os"
-)
-
 type CommandInterface interface {
 	// Run
 	//
@@ -34,17 +28,4 @@ type Arg struct {
 	Name        string `json:"name"`
 	Type        string `json:"type"`
 	Description string `json:"description"`
-}
-
-func GetCommandFromYml(filePath string) (*Command, error) {
-	yamlData, err := os.ReadFile(filePath)
-
-	var cmd Command
-	err = yaml.Unmarshal([]byte(yamlData), &cmd)
-	if err != nil {
-		fmt.Println("Error parsing YAML:", err)
-		return nil, err
-	}
-
-	return &cmd, nil
 }
