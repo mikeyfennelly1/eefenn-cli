@@ -15,6 +15,10 @@ type ConfigInterface interface {
 	Update() error
 
 	AddCommand(subcommand cmd_config.Command)
+
+	GetCommandArgs(commandName string) ([]cmd_config.Arg, error)
+
+	RemoveCommandByName(name string) error
 }
 
 type Config struct {
@@ -92,5 +96,42 @@ func (c *Config) Update() error {
 // marshalled subcommand data.
 func (c *Config) AddCommand(subcommand cmd_config.Command) error {
 	c.Commands = append(c.Commands, subcommand)
+	return nil
+}
+
+// GetCommandArgs
+//
+// Get the arguments of a command by command name
+func GetCommandArgs(commandName string) ([]cmd_config.Arg, error) {
+	currentConfig, err := GetCurrentConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, sc := range currentConfig.Commands {
+		if sc.Name == commandName {
+			return sc.Args, nil
+		}
+	}
+
+	return nil, fmt.Errorf("Could not find parameters for the command: '%s'\n", commandName)
+}
+
+// RemoveCommandByName
+//
+// remove a command using the command name as a parameter
+func (config *Config) RemoveCommandByName(name string) error {
+	var targetIndex int
+
+	for index, scmd := range config.Commands {
+		if scmd.Name == name {
+			targetIndex = index
+		}
+	}
+
+	config.Commands = append(config.Commands[:targetIndex], config.Commands[targetIndex+1:]...)
+
+	config.Update()
+
 	return nil
 }
