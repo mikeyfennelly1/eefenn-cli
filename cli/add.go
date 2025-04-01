@@ -3,9 +3,8 @@ package cli
 import (
 	"fmt"
 	"github.com/eefenn/eefenn-cli/cmd-config"
-	"github.com/eefenn/eefenn-cli/core"
 	"github.com/eefenn/eefenn-cli/core/config"
-	"github.com/eefenn/eefenn-cli/utils"
+	"github.com/eefenn/eefenn-cli/core/utils"
 )
 
 func Add(cmd cmd_config.Command) error {

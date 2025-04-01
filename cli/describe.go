@@ -2,11 +2,12 @@ package cli
 
 import (
 	"fmt"
+	utils2 "github.com/eefenn/eefenn-cli/core/utils"
 	"github.com/eefenn/eefenn-cli/utils"
 )
 
 func Describe(commandName string) error {
-	_, command, err := utils.GetCommand(commandName)
+	_, command, err := utils2.GetCommand(commandName)
 	if err != nil {
 		return err
 	}

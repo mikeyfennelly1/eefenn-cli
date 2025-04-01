@@ -14,7 +14,7 @@ func Commit(commandName string, commitMessage string) error {
 	}
 
 	// get the absolute path of the script file for the command
-	commandScriptAbsPath := utils.GetSubcommandShellFileAbsPath(commandName)
+	commandScriptAbsPath := utils.getSubcommandShellFileAbsPath(commandName)
 	if err != nil {
 		return err
 	}
