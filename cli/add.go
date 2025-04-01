@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/eefenn/eefenn-cli/core/config"
-	"github.com/eefenn/eefenn-cli/core/utils"
+	"github.com/eefenn/eefenn-cli/core/core_utils"
 )
 
 func Add(cmd cmd_config.Command) error {
 	// if the cmd already exists, return an error
-	if utils.CommandExists(cmd.Name) {
+	if core_utils.CommandExists(cmd.Name) {
 		return fmt.Errorf("Command already exists.\n")
 	}
 

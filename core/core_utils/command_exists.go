@@ -1,4 +1,4 @@
-package utils
+package core_utils
 
 func CommandExists(commandName string) bool {
 	_, name, _ := GetCommand(commandName)

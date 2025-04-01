@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	utils2 "github.com/eefenn/eefenn-cli/core/utils"
+	utils2 "github.com/eefenn/eefenn-cli/core/core_utils"
 	"github.com/eefenn/eefenn-cli/utils"
 )
 
