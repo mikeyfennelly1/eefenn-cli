@@ -7,36 +7,35 @@ import (
 )
 
 type Command struct {
-	// array of filepaths that the script needs to run
-	Needs []string `yaml:"needs"`
-
 	// alias of the script
 	Name string `yaml:"name"`
 
 	// the script which the command is an alias for
 	Script string `yaml:"script"`
 
+	// array of filepaths that the script needs to run
+	Needs []string `yaml:"needs"`
+
 	// description for what the script does
 	Description string `yaml:"description"`
 
 	// the arguments to the command
 	Args []struct {
-		Name        string `yaml:"string"`
-		Description string `yaml:"string"`
+		Name        string `yaml:"name"`
+		Type        string `yaml:"type"`
+		Description string `yaml:"description"`
 	}
 }
 
-func GetCommandFromYml() {
-	yamlData, err := os.ReadFile("config.yaml")
+func GetCommandFromYml(filePath string) (*Command, error) {
+	yamlData, err := os.ReadFile(filePath)
 
-	var config Command
-	err = yaml.Unmarshal([]byte(yamlData), &config)
+	var cmd Command
+	err = yaml.Unmarshal([]byte(yamlData), &cmd)
 	if err != nil {
 		fmt.Println("Error parsing YAML:", err)
-		return
+		return nil, err
 	}
 
-	// Print parsed struct
-	fmt.Printf("Parsed struct: %+v\n", config)
-
+	return &cmd, nil
 }
