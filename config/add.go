@@ -9,6 +9,6 @@ import (
 // Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled subcommand data.
 func (c *Config) AddCommand(subcommand cmd_config.Command) error {
-	c.Subcommands = append(c.Subcommands, subcommand)
+	c.commands = append(c.commands, subcommand)
 	return nil
 }
