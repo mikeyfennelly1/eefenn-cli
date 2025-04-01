@@ -10,7 +10,6 @@ import (
 	"fmt"
 	cmd_config "github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/eefenn/eefenn-cli/core/config"
-	"github.com/eefenn/eefenn-cli/utils"
 	"io"
 	"os"
 )
@@ -34,16 +33,6 @@ type EefennCLIDirectoryTreeInterface interface {
 	// Create an entry in /usr/lib/eefenn-cli for the Subcommand.
 	CreateSubcommandDirTree(cmd cmd_config.Command) error
 
-	// GetAbsoluteSubcommandDirname
-	//
-	// get the absolute directory path for the Subcommand directory.
-	GetAbsoluteSubcommandDirname(commandName string) string
-
-	// GetSubcommandDependenciesDirectory
-	//
-	// Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
-	GetSubcommandDependenciesDirectory(cmd cmd_config.Command) string
-
 	// CreateEmptySubcommandShellFile
 	//
 	// Create an empty shell file of the name <command-hash>.sh
@@ -64,7 +53,7 @@ type EefennCLIDirectoryTree struct {
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
 func (edt *EefennCLIDirectoryTree) CreateSubcommandDirTree(cmd cmd_config.Command) error {
 	// create the directory that contains dependencies and script for the command
-	subCommandDependenciesDir := edt.GetSubcommandDependenciesDirectory(cmd)
+	subCommandDependenciesDir := getSubcommandDependenciesDirectory(cmd.Name)
 
 	err := os.MkdirAll(subCommandDependenciesDir, 0755)
 	if err != nil {
@@ -86,31 +75,11 @@ func (edt *EefennCLIDirectoryTree) CreateSubcommandDirTree(cmd cmd_config.Comman
 	return nil
 }
 
-// GetAbsoluteSubcommandDirname
-//
-// get the absolute directory path for the Subcommand directory.
-func (edt *EefennCLIDirectoryTree) GetAbsoluteSubcommandDirname(commandName string) string {
-	// create the string for the command ID
-	commandDirectory := fmt.Sprintf("%s/%s", EefennCLIRoot, commandName)
-
-	return commandDirectory
-}
-
-// GetSubcommandDependenciesDirectory
-//
-// Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
-func (edt *EefennCLIDirectoryTree) GetSubcommandDependenciesDirectory(cmd cmd_config.Command) string {
-	// create the string for the command ID
-	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, cmd.Name, cmd.Name)
-
-	return commandDependenciesDirectory
-}
-
 // CreateEmptySubcommandShellFile
 //
 // Create an empty shell file of the name <command-hash>.sh
 func (edt *EefennCLIDirectoryTree) CreateEmptySubcommandShellFile(cmd cmd_config.Command) (*os.File, error) {
-	fileName := utils.GetSubcommandShellFileAbsPath(cmd.Name)
+	fileName := getSubcommandShellFileAbsPath(cmd.Name)
 
 	// create the file
 	file, err := os.Create(fileName)
@@ -125,7 +94,7 @@ func (edt *EefennCLIDirectoryTree) CreateEmptySubcommandShellFile(cmd cmd_config
 //
 // remove a command directory recursively by command hash
 func (edt *EefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName string) error {
-	dirname := edt.GetAbsoluteSubcommandDirname(commandName)
+	dirname := getAbsoluteSubcommandDirname(commandName)
 
 	err := os.RemoveAll(dirname)
 	if err != nil {
@@ -135,7 +104,10 @@ func (edt *EefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName
 	return nil
 }
 
-func (edt *EefennCLIDirectoryTree) CopyShellScript(cmd cmd_config.Command) error {
+// CopyScriptToCommandDirectory
+//
+// Move a shell script to its command's directory
+func (edt *EefennCLIDirectoryTree) CopyScriptToCommandDirectory(cmd cmd_config.Command) error {
 	sourceFile, err := os.OpenFile(cmd.Script, os.O_RDONLY, 0666)
 	if err != nil {
 		return err
