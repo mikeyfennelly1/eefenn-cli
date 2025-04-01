@@ -1,3 +1,9 @@
+// command_dir.go
+//
+// For interacting with the directory tree that manages commands.
+//
+// Author: Mikey Fennelly <mikeyp.fennelly@gmail.com>
+
 package command_dir
 
 import (
@@ -11,6 +17,17 @@ import (
 
 const EefennCLIRoot = "/usr/lib/eefenn-cli"
 
+// EefennCLIDirectoryTreeInterface
+//
+// For interfacing with the directory tree starting from the root: /usr/lib/eefenn-cli
+//
+// This can be used to
+//   - Create subdirectories that correspond to the conventional directory tree
+//     structure for an eefenn command.
+//   - Utilities for getting data relating to the conventional directory tree such as
+//     script paths for command scripts, dependency directory paths.
+//   - Methods for interacting with a command's files, such as creating, removing and
+//     moving command subdirectories to other directories in the filesystem for editing.
 type EefennCLIDirectoryTreeInterface interface {
 	// CreateSubcommandDirTree
 	//
@@ -35,7 +52,7 @@ type EefennCLIDirectoryTreeInterface interface {
 	// RemoveCommandDirectoryRecursively
 	//
 	// remove a command directory recursively by command hash.
-	RemoveCommandDirectoryRecursively(commandName string)
+	RemoveCommandDirectoryRecursively(commandName string) error
 }
 
 type EefennCLIDirectoryTree struct {
