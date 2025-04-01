@@ -14,12 +14,12 @@ func Commit(commandName string, commitMessage string) error {
 	}
 
 	// get the absolute path of the script file for the command
-	commandScriptAbsPath, err := utils.GetSubcommandShellFileAbsPath(commandName)
+	commandScriptAbsPath := utils.GetSubcommandShellFileAbsPath(commandName)
 	if err != nil {
 		return err
 	}
 	// write the contents of the updated file to the script for the command
-	err = os.WriteFile(*commandScriptAbsPath, updatedFileContents, 0666)
+	err = os.WriteFile(commandScriptAbsPath, updatedFileContents, 0666)
 	if err != nil {
 		return err
 	}

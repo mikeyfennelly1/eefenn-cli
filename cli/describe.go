@@ -20,7 +20,7 @@ func Describe(commandName string) error {
 
 	// print command parameters
 	fmt.Printf("\u001B[1m%s\u001B[0m \n\n", "PARAMETERS:")
-	for _, param := range command.Parameters {
+	for _, param := range command.Args {
 		// print `<param_name>:<param_description>`
 		fmt.Printf("\u001B[1m%s\u001B[0m: %s", param.Name, param.Description)
 	}

@@ -8,9 +8,9 @@ import (
 	"github.com/eefenn/eefenn-cli/utils"
 )
 
-func Add(command cmd_config.Command) error {
-	// if the command already exists, return an error
-	if utils.CommandExists(command.Name) {
+func Add(cmd cmd_config.Command) error {
+	// if the cmd already exists, return an error
+	if utils.CommandExists(cmd.Name) {
 		return fmt.Errorf("Command already exists.\n")
 	}
 
@@ -19,18 +19,24 @@ func Add(command cmd_config.Command) error {
 	if err != nil {
 		return err
 	}
-	currentConfig.AddCommand()
-	currentConfig.Update()
+	err = currentConfig.AddCommand(cmd)
+	if err != nil {
+		return err
+	}
+	err = currentConfig.Update()
+	if err != nil {
+		return err
+	}
 
-	// create the directory structure for the command
-	err = command_dir.CreateSubcommandDirTree(subcommand.Hash)
+	// create the directory structure for the cmd
+	err = command_dir.CreateSubcommandDirTree(cmd)
 	if err != nil {
 		return err
 	}
 
 	// copy the shell script for the subcommand to the script
 	// location in /usr/lib/eefenn-cli/<command_hash>
-	err = command_dir.CopyShellScript(subcommand.Script, subcommand.Hash)
+	err = command_dir.CopyShellScript(cmd)
 	if err != nil {
 		return err
 	}

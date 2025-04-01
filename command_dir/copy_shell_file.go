@@ -1,18 +1,19 @@
 package command_dir
 
 import (
+	cmd_config "github.com/eefenn/eefenn-cli/cmd-config"
 	"io"
 	"os"
 )
 
-func CopyShellScript(sourceScript string, commandHash string) error {
-	sourceFile, err := os.OpenFile(sourceScript, os.O_RDONLY, 0666)
+func CopyShellScript(cmd cmd_config.Command) error {
+	sourceFile, err := os.OpenFile(cmd.Script, os.O_RDONLY, 0666)
 	if err != nil {
 		return err
 	}
 	defer sourceFile.Close()
 
-	destinationFile, err := CreateEmptySubcommandShellFile(commandHash)
+	destinationFile, err := CreateEmptySubcommandShellFile(cmd)
 	if err != nil {
 		return err
 	}

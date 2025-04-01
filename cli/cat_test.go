@@ -6,6 +6,6 @@ import (
 )
 
 func TestCat(t *testing.T) {
-	err := Cat("echo-hello")
+	err := Cat("test2")
 	require.NoError(t, err)
 }

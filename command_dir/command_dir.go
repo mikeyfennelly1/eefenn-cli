@@ -12,9 +12,9 @@ const EefennCLIRoot = "/usr/lib/eefenn-cli"
 // CreateSubcommandDirTree
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
-func CreateSubcommandDirTree(commandConfig cmd_config.Command) error {
+func CreateSubcommandDirTree(cmd cmd_config.Command) error {
 	// create the directory that contains dependencies and script for the command
-	subCommandDependenciesDir := GetSubcommandDependenciesDirectory(commandConfig.Name)
+	subCommandDependenciesDir := GetSubcommandDependenciesDirectory(cmd)
 
 	err := os.MkdirAll(subCommandDependenciesDir, 0755)
 	if err != nil {
@@ -22,7 +22,7 @@ func CreateSubcommandDirTree(commandConfig cmd_config.Command) error {
 	}
 
 	// create a blank command script
-	blankFile, err := CreateEmptySubcommandShellFile(commandConfig.Name)
+	blankFile, err := CreateEmptySubcommandShellFile(cmd)
 	if err != nil {
 		return fmt.Errorf("Could not create empty Subcommand .sh file\n")
 	}
@@ -49,9 +49,9 @@ func GetAbsoluteSubcommandDirname(commandName string) string {
 // GetSubcommandDependenciesDirectory
 //
 // Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
-func GetSubcommandDependenciesDirectory(commandName string) string {
+func GetSubcommandDependenciesDirectory(cmd cmd_config.Command) string {
 	// create the string for the command ID
-	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, commandName, commandName)
+	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, cmd.Name, cmd.Name)
 
 	return commandDependenciesDirectory
 }
@@ -59,14 +59,11 @@ func GetSubcommandDependenciesDirectory(commandName string) string {
 // CreateEmptySubcommandShellFile
 //
 // Create an empty shell file of the name <command-hash>.sh
-func CreateEmptySubcommandShellFile(commandName string) (*os.File, error) {
-	fileName, err := utils.GetSubcommandShellFileAbsPath(commandName)
-	if err != nil {
-		return nil, err
-	}
+func CreateEmptySubcommandShellFile(cmd cmd_config.Command) (*os.File, error) {
+	fileName := utils.GetSubcommandShellFileAbsPath(cmd.Name)
 
 	// create the file
-	file, err := os.Create(*fileName)
+	file, err := os.Create(fileName)
 	if err != nil {
 		return nil, err
 	}

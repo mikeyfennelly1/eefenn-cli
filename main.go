@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/eefenn/eefenn-cli/cli"
-	"github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -11,6 +10,7 @@ import (
 var (
 	file          string
 	name          string
+	configPath    string
 	description   string
 	commandName   string
 	commitMessage string
@@ -36,13 +36,6 @@ var addCommand = &cobra.Command{
 			return
 		}
 
-		thisSubcommand := cmd_config.CreateSubCommand(name, file, description)
-		err := cli.Add(thisSubcommand)
-		if err != nil {
-			fmt.Printf("Could not create subcommand: %v", err)
-			return
-		}
-		fmt.Println(thisSubcommand.Hash)
 	},
 }
 
@@ -124,23 +117,10 @@ var describeCommand = &cobra.Command{
 	},
 }
 
-// command for printing the description of an existing command
-var addDescriptionCommand = &cobra.Command{
-	Use:   "add-description",
-	Short: "Add description to the command",
-	Run: func(cmd *cobra.Command, args []string) {
-		err := cli.AddDescription(commandName, description)
-		if err != nil {
-			fmt.Printf("Could not add description: %v\n", err)
-		}
-	},
-}
-
 func init() {
 	// add flags to the 'ef add' command
-	addCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
-	addCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
-	addCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
+	addCommand.Flags().StringVarP(&configPath, "config", "c", "", "Path to the config.yaml for the command.")
+
 	// add flags to the 'ef rm' command
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
 	// add flags to the 'ef run' command
@@ -155,9 +135,6 @@ func init() {
 	// add flags to the 'ef commit' command
 	commitCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to commit.")
 	commitCommand.Flags().StringVarP(&commitMessage, "message", "m", "", "The commit message for the commit.")
-
-	// add flags to the 'ef commit' command
-	addDescriptionCommand.Flags().StringVarP(&description, "new-description", "nd", "", "The new description that you want to add.")
 }
 
 func main() {
@@ -209,12 +186,6 @@ func main() {
 		return
 	}
 	err = commitCommand.MarkFlagRequired("message")
-	if err != nil {
-		return
-	}
-
-	rootCmd.AddCommand(addDescriptionCommand)
-	err = commitCommand.MarkFlagRequired("new-description")
 	if err != nil {
 		return
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/eefenn/eefenn-cli/config"
 )
 
-func ReplaceCommand(commandToReplace string, newCommand cmd_config.Subcommand) error {
+func ReplaceCommand(commandToReplace string, newCmd cmd_config.Command) error {
 	// get the index of the command that you want to replace
 	replaceTargetIndex, _, err := GetCommand(commandToReplace)
 	if err != nil {
@@ -19,7 +19,7 @@ func ReplaceCommand(commandToReplace string, newCommand cmd_config.Subcommand) e
 	}
 
 	// replace the command
-	currentConfig.Subcommands[*replaceTargetIndex] = newCommand
+	currentConfig.Commands[*replaceTargetIndex] = newCmd
 
 	// update the command
 	err = currentConfig.Update()

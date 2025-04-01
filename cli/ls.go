@@ -15,9 +15,7 @@ func LS() error {
 
 	printHeaders()
 
-	for _, sc := range config.Subcommands {
-		sc.List()
-	}
+	fmt.Printf("%v\n", config.Commands)
 
 	return nil
 }

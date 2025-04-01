@@ -6,9 +6,15 @@ import (
 	"testing"
 )
 
-var testSubcommand = cmd_config.CreateSubCommand("test", "test-script.sh", "test command")
+var echoHello = cmd_config.Command{
+	Name:        "echo-hello",
+	Script:      "echo-hello.sh",
+	Needs:       nil,
+	Description: "",
+	Args:        nil,
+}
 
 func TestRM(t *testing.T) {
-	err := RemoveSubcommand(testSubcommand.Name)
+	err := RemoveSubcommand(echoHello.Name)
 	require.NoError(t, err)
 }

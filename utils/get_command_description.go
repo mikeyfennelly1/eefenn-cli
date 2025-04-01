@@ -11,7 +11,7 @@ func GetCommandDescription(commandName string) (*string, error) {
 		return nil, err
 	}
 
-	for _, sc := range currentConfig.Subcommands {
+	for _, sc := range currentConfig.Commands {
 		if sc.Name == commandName {
 			return &sc.Description, nil
 		}

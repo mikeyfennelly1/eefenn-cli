@@ -10,10 +10,9 @@ func TestAddCommand(t *testing.T) {
 	config, err := GetCurrentConfig()
 	require.NoError(t, err)
 
-	testCommandToAdd := cmd_config.Subcommand{
+	testCommandToAdd := cmd_config.Command{
 		Name:        "test2",
 		Script:      "test2.sh",
-		Hash:        "b6f5d20c-3fbe-4326-88c7-c3b4ef967c02",
 		Description: "Second test description",
 	}
 

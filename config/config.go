@@ -8,22 +8,13 @@ import (
 
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
+type ConfigInterface interface {
+	Update() error
+}
+
 type Config struct {
 	RemoteRepoURL string               `json:"remoteRepoURL"`
 	Commands      []cmd_config.Command `json:"subcommands"`
-}
-
-// writeToConfigFile
-//
-// write the contents of a byte array to the eefenn-cli.config.json
-func writeToConfigFile(updatedConfig []byte) error {
-	// Write directly to file without re-marshaling
-	err := os.WriteFile(EefennCLIConfig, updatedConfig, 0666)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func GetCurrentConfig() (Config, error) {

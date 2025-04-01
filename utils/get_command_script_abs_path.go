@@ -8,14 +8,9 @@ const EefennCLIRoot = "/usr/lib/eefenn-cli"
 //
 // Get the absolute path to the shell script for the command
 // based on commandHash
-func GetSubcommandShellFileAbsPath(commandName string) (*string, error) {
-	commandHash, err := GetCommandHash(commandName)
-	if err != nil {
-		return nil, err
-	}
+func GetSubcommandShellFileAbsPath(commandName string) string {
+	// return '<command-name>.sh' filename string
+	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandName, commandName)
 
-	// create '<command-hash>.sh' filename string
-	fileName := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandHash, commandHash)
-
-	return &fileName, err
+	return fileName
 }

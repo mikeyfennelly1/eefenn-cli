@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"github.com/eefenn/eefenn-cli/command_dir"
 	"github.com/eefenn/eefenn-cli/config"
-	"github.com/eefenn/eefenn-cli/utils"
 )
 
 // RemoveSubcommand
@@ -24,18 +23,8 @@ func RemoveSubcommand(commandName string) error {
 		return err
 	}
 
-	// get the hash code for the command
-	commandHash, err := utils.GetCommandHash(commandName)
-	if commandHash == nil {
-		fmt.Printf("Command '%s does not exist.\n", commandName)
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-
 	// remove the command directory for this command
-	err = command_dir.RemoveCommandDirectoryRecursively(*commandHash)
+	err = command_dir.RemoveCommandDirectoryRecursively(commandName)
 	if err != nil {
 		return err
 	}
