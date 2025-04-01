@@ -20,11 +20,13 @@ type Command struct {
 	Description string `yaml:"description"`
 
 	// the arguments to the command
-	Args []struct {
-		Name        string `yaml:"name"`
-		Type        string `yaml:"type"`
-		Description string `yaml:"description"`
-	}
+	Args []Arg
+}
+
+type Arg struct {
+	Name        string `yaml:"name"`
+	Type        string `yaml:"type"`
+	Description string `yaml:"description"`
 }
 
 func GetCommandFromYml(filePath string) (*Command, error) {

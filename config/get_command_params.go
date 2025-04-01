@@ -5,15 +5,18 @@ import (
 	"github.com/eefenn/eefenn-cli/cmd-config"
 )
 
-func GetCommandParams(commandName string) ([]cmd_config.Parameter, error) {
+// GetCommandArgs
+//
+// Get the arguments of a command by command name
+func GetCommandArgs(commandName string) ([]cmd_config.Arg, error) {
 	currentConfig, err := GetCurrentConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	for _, sc := range currentConfig.Subcommands {
+	for _, sc := range currentConfig.commands {
 		if sc.Name == commandName {
-			return sc.Parameters, nil
+			return sc.Args, nil
 		}
 	}
 
