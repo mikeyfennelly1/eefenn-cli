@@ -2,12 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/cmd-config"
 	"github.com/eefenn/eefenn-cli/core/config"
 	"github.com/eefenn/eefenn-cli/core/core_utils"
+	"github.com/eefenn/eefenn-cli/yaml"
 )
 
-func Add(cmd cmd_config.Command) error {
+func Add(cmd yaml.Command) error {
 	// if the cmd already exists, return an error
 	if core_utils.CommandExists(cmd.Name) {
 		return fmt.Errorf("Command already exists.\n")

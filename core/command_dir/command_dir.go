@@ -8,8 +8,7 @@ package command_dir
 
 import (
 	"fmt"
-	cmd_config "github.com/eefenn/eefenn-cli/cmd-config"
-	"github.com/eefenn/eefenn-cli/core/config"
+	cmd_config "github.com/eefenn/eefenn-cli/yaml"
 	"io"
 	"os"
 )
@@ -44,9 +43,7 @@ type EefennCLIDirectoryTreeInterface interface {
 	RemoveCommandDirectoryRecursively(commandName string) error
 }
 
-type EefennCLIDirectoryTree struct {
-	Config config.Config
-}
+type EefennCLIDirectoryTree struct{}
 
 // CreateSubcommandDirTree
 //

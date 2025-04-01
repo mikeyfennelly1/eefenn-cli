@@ -1,12 +1,12 @@
 package cli
 
 import (
-	"github.com/eefenn/eefenn-cli/cmd-config"
+	"github.com/eefenn/eefenn-cli/yaml"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-var echoHello = cmd_config.Command{
+var echoHello = yaml.Command{
 	Name:        "echo-hello",
 	Script:      "echo-hello.sh",
 	Needs:       nil,
