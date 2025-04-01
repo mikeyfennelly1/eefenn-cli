@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/eefenn/eefenn-cli/cmd-config"
-	"github.com/eefenn/eefenn-cli/config"
+	"github.com/eefenn/eefenn-cli/core/config"
 )
 
 func ReplaceCommand(commandToReplace string, newCmd cmd_config.Command) error {

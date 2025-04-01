@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/eefenn/eefenn-cli/cmd-config"
-	"github.com/eefenn/eefenn-cli/config"
+	"github.com/eefenn/eefenn-cli/core/config"
 )
 
 // GetCommand

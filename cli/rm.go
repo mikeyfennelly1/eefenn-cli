@@ -9,8 +9,8 @@ package cli
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/command_dir"
-	"github.com/eefenn/eefenn-cli/config"
+	"github.com/eefenn/eefenn-cli/core"
+	"github.com/eefenn/eefenn-cli/core/config"
 )
 
 // RemoveSubcommand

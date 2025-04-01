@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/config"
+	"github.com/eefenn/eefenn-cli/core/config"
 )
 
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"

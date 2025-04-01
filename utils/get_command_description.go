@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/config"
+	"github.com/eefenn/eefenn-cli/core/config"
 )
 
 func GetCommandDescription(commandName string) (*string, error) {

@@ -10,14 +10,37 @@ import (
 const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 type ConfigInterface interface {
+	// GetCommandByName
+	//
+	// Get a that exists in the config file command by the name of the command.
+	//
+	// Returns the index of the command, the Command struct for
+	// the command, and error status.
 	GetCommandByName(name string) (*int, *cmd_config.Command, error)
 
+	// Update
+	//
+	// Write the contents of a Config object to the config file.
+	//
+	// Returns error status.
 	Update() error
 
-	AddCommand(subcommand cmd_config.Command)
+	// AddCommand
+	//
+	// Update /usr/lib/eefenn-cli/eefenn-cli.config.json with
+	// marshalled subcommand data.
+	AddCommand(subcommand cmd_config.Command) error
 
+	// GetCommandArgs
+	//
+	// Get the arguments to a command by commandName.
+	//
+	// Returns command's arguments and error status.
 	GetCommandArgs(commandName string) ([]cmd_config.Arg, error)
 
+	// RemoveCommandByName
+	//
+	// remove a command using the command name as a parameter.
 	RemoveCommandByName(name string) error
 }
 
@@ -26,6 +49,21 @@ type Config struct {
 	Commands      []cmd_config.Command `json:"subcommands"`
 }
 
+// GetCommandArgs
+//
+// Get the arguments to a command by commandName.
+//
+// Returns command's arguments and error status.
+func (c *Config) GetCommandArgs(commandName string) ([]cmd_config.Arg, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+// GetCurrentConfig
+//
+// Get a Config object for the current state of the config file.
+//
+// Returns Config object, and error status.
 func GetCurrentConfig() (Config, error) {
 	var config Config
 
@@ -99,27 +137,9 @@ func (c *Config) AddCommand(subcommand cmd_config.Command) error {
 	return nil
 }
 
-// GetCommandArgs
-//
-// Get the arguments of a command by command name
-func GetCommandArgs(commandName string) ([]cmd_config.Arg, error) {
-	currentConfig, err := GetCurrentConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, sc := range currentConfig.Commands {
-		if sc.Name == commandName {
-			return sc.Args, nil
-		}
-	}
-
-	return nil, fmt.Errorf("Could not find parameters for the command: '%s'\n", commandName)
-}
-
 // RemoveCommandByName
 //
-// remove a command using the command name as a parameter
+// remove a command using the command name as a parameter.
 func (config *Config) RemoveCommandByName(name string) error {
 	var targetIndex int
 
