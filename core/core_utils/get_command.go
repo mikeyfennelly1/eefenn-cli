@@ -15,7 +15,7 @@ import (
 // - ptr to the Subcommand structure for the command
 // - error status
 func GetCommand(commandName string) (*int, *cmd.Command, error) {
-	currentConfig, err := config.GetCurrentConfig()
+	currentConfig, err := config.getCurrentConfig()
 	if err != nil {
 		return nil, nil, err
 	}

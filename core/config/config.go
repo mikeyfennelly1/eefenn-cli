@@ -16,28 +16,28 @@ type ConfigInterface interface {
 	//
 	// Returns the index of the command, the Command struct for
 	// the command, and error status.
-	GetCommandByName(name string) (*int, *cmd.Command, error)
+	getCommandByName(name string) (*int, *cmd.Command, error)
 
 	// AddCommand
 	//
 	// update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 	// marshalled subcommand data.
-	AddCMD(subcommand cmd.Command) error
+	addCMD(subcommand cmd.Command) error
 
 	// GetCommandArgs
 	//
 	// Get the arguments to a command by commandName.
 	//
 	// Returns command's arguments and error status.
-	GetCommandArgs(commandName string) ([]cmd.Arg, error)
+	getCommandArgs(commandName string) ([]cmd.Arg, error)
 
 	// RemoveCommandByName
 	//
 	// remove a command using the command name as a parameter.
-	RemoveCommandByName(name string) error
+	removeCommandByName(name string) error
 }
 
-type Config struct {
+type config struct {
 	RemoteRepoURL string        `json:"remoteRepoURL"`
 	Commands      []cmd.Command `json:"commands"`
 }
@@ -47,18 +47,18 @@ type Config struct {
 // Get the arguments to a command by commandName.
 //
 // Returns command's arguments and error status.
-func (c *Config) GetCommandArgs(commandName string) ([]cmd.Arg, error) {
+func (c *config) getCommandArgs(commandName string) ([]cmd.Arg, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-// GetCurrentConfig
+// getCurrentConfig
 //
-// Get a Config object for the current state of the config file.
+// Get a config object for the current state of the config file.
 //
-// Returns Config object, and error status.
-func GetCurrentConfig() (Config, error) {
-	var config Config
+// Returns config object, and error status.
+func getCurrentConfig() (config, error) {
+	var config config
 
 	// Open the JSON file
 	file, err := os.Open(EefennCLIConfig)
@@ -83,7 +83,7 @@ func GetCurrentConfig() (Config, error) {
 //
 // Returns the index of the command, the Command struct for
 // the command, and error status.
-func (c *Config) GetCommandByName(name string) (*int, *cmd.Command, error) {
+func (c *config) getCommandByName(name string) (*int, *cmd.Command, error) {
 	var p_cmd *cmd.Command
 	var p_commandIndex *int
 
@@ -104,10 +104,10 @@ func (c *Config) GetCommandByName(name string) (*int, *cmd.Command, error) {
 
 // update
 //
-// Write the contents of a Config object to the config file.
+// Write the contents of a config object to the config file.
 //
 // Returns error status.
-func (c *Config) update() error {
+func (c *config) update() error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("You must be root to update commands.\n")
 	}
@@ -128,8 +128,8 @@ func (c *Config) update() error {
 //
 // update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled subcommand data.
-func (c *Config) AddCMD(subcommand cmd.Command) error {
-	c.Commands = append(c.Commands, subcommand)
+func (c *config) addCMD(cmd cmd.Command) error {
+	c.Commands = append(c.Commands, cmd)
 	err := c.update()
 	if err != nil {
 		return err
@@ -141,11 +141,11 @@ func (c *Config) AddCMD(subcommand cmd.Command) error {
 // RemoveCommandByName
 //
 // remove a command using the command name as a parameter.
-func (config *Config) RemoveCommandByName(name string) error {
+func (config *config) removeCommandByName(name string) error {
 	var targetIndex int
 
-	for index, cmd := range config.Commands {
-		if cmd.Name == name {
+	for index, existingCommand := range config.Commands {
+		if existingCommand.Name == name {
 			targetIndex = index
 		}
 	}

@@ -1,10 +1,17 @@
 package core_utils
 
+import (
+	"strings"
+)
+
 func CMDExists(commandName string) bool {
-	_, name, _ := GetCommand(commandName)
-	if name != nil {
-		return false
+	var cmdExists bool
+	_, cmd, _ := GetCommand(commandName)
+
+	if cmd != nil {
+		cmdExists = strings.Compare(cmd.Name, commandName) == 0
 	} else {
-		return false
+		cmdExists = false
 	}
+	return cmdExists
 }

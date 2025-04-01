@@ -16,32 +16,32 @@ var testCMD = cmd.Command{
 }
 
 func TestGetCurrentConfig(t *testing.T) {
-	_, err := GetCurrentConfig()
+	_, err := getCurrentConfig()
 	require.NoError(t, err)
 }
 
 func TestConfig_AddCommand(t *testing.T) {
-	currentConfig, err := GetCurrentConfig()
+	currentConfig, err := getCurrentConfig()
 	require.NoError(t, err)
 
-	err = currentConfig.AddCMD(testCMD)
+	err = currentConfig.addCMD(testCMD)
 	require.NoError(t, err)
 }
 
 func TestConfig_GetCommandByName(t *testing.T) {
-	currentConfig, err := GetCurrentConfig()
+	currentConfig, err := getCurrentConfig()
 	require.NoError(t, err)
-	_, result, err := currentConfig.GetCommandByName(testCMD.Name)
+	_, result, err := currentConfig.getCommandByName(testCMD.Name)
 	require.NoError(t, err)
 	assert.Equal(t, testCMD, *result)
 }
 
 func TestConfig_RemoveCommandByName(t *testing.T) {
-	currentConfig, err := GetCurrentConfig()
+	currentConfig, err := getCurrentConfig()
 	if err != nil {
 		return
 	}
 
-	err = currentConfig.RemoveCommandByName(testCMD.Name)
+	err = currentConfig.removeCommandByName(testCMD.Name)
 	require.NoError(t, err)
 }

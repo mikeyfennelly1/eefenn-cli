@@ -10,22 +10,22 @@ import (
 
 // Add a command by .yaml configuration file
 func Commit() error {
-	pwd, err := os.Getwd()
+	// if there is a config file in the pwd, get its path
+	pathToConfigInPWD, err := findConfigYamlInPWD()
 	if err != nil {
 		return err
 	}
-	// construct the path for the configuration file
-	configInPWD := fmt.Sprintf("%s/config.yaml", pwd)
-	// Parse the command from a Yaml file at location 'filePath'
-	thisCMD, err := cmd.ParseCommandFromYaml(configInPWD)
-	if err != nil {
-		return err
-	}
+	fmt.Printf("Found config file '%s' in pwd.", pathToConfigInPWD)
+
+	validateConfig(pathToConfigInPWD)
 
 	// check if the passed config data is valid
-	cmdIsValid, err := configIsValid(*thisCMD)
-	if !cmdIsValid || err != nil {
-		return fmt.Errorf("Error parsing config: %s", err)
+	cmdIsValid := configFileDependenciesExistInPWD(*pCommandInPwd)
+	if err != nil {
+		return err
+	}
+	if !cmdIsValid {
+		return fmt.Errorf("Invalid Command: %v\n", err)
 	}
 
 	// If the thisCMD already exists, return an error
@@ -33,29 +33,13 @@ func Commit() error {
 		return fmt.Errorf("Command already exists.\n")
 	}
 
-	core, err := core.GetCore()
+	currentCore, err := core.GetCore()
 	if err != nil {
 		return err
 	}
 
-	// Add the command to the config file
-	err = core.Config.AddCMD(*thisCMD)
-	if err != nil {
-		return err
-	}
-	// Create the directory tree for the command
-	err = core.DirectoryTree.CreateCMDDirTree(*thisCMD)
-	if err != nil {
-		return err
-	}
-	// Copy the script for the command from the pwd to the script
-	// in newly created directory tree.
-	err = core.DirectoryTree.CopyScriptToCMDDir(*thisCMD)
-	if err != nil {
-		return err
-	}
-
-	err = core.DirectoryTree.CopyDependenciesToDependenciesDir(*thisCMD)
+	// commit the command to currentCore
+	err = currentCore.Commit(*thisCMD)
 	if err != nil {
 		return err
 	}
@@ -64,15 +48,27 @@ func Commit() error {
 	return nil
 }
 
-func configIsValid(commandParsedFromConfig cmd.Command) (bool, error) {
+// findConfigYamlInPWD
+// Get a yaml configuration file in pwd if one exists.
+func findConfigYamlInPWD() (string, error) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	// construct the path for the configuration file
+	return fmt.Sprintf("%s/config.yaml", pwd), nil
+}
+
+func configFileDependenciesExistInPWD(commandParsedFromConfig cmd.Command) bool {
 	// loop through all dependency files for the command
 	for _, file := range commandParsedFromConfig.Needs {
 		// check if each file is found in the pwd or in the pwd subtree
 		if fileFoundInPWDTree(file) == false {
-			return false, fmt.Errorf("Could not find dependency file '%s'", file)
+			return false
 		}
 	}
-	return true, nil
+	return true
 }
 
 func fileFoundInPWDTree(fileName string) bool {
@@ -82,4 +78,10 @@ func fileFoundInPWDTree(fileName string) bool {
 	} else {
 		return false
 	}
+}
+
+// validateConfig
+// Takes the path to a config file and checks if the syntax is valid
+func validateConfig(pathToConfigFile string) error {
+
 }

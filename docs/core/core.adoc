@@ -1,0 +1,58 @@
+= eefenn-cli core
+:toc:
+
+== Preface
+
+This is the component of the application that provides the interace to the configuration file (which maintains global information), and subdirectories within the filesystem to manage commands.
+
+The core is intended to act as a black box, and hide the implementation of how commands are handled internally from users.
+
+=== Design Choices
+
+The design of the core is intended to keep a user of the API away from being able to access the config API or command_dir API directly. An update to application state should be an update to metadata of the application state, hence the API is intended to provide APIs to make interaction simple and atomic.
+
+== Usage
+
+=== CoreInterface
+
+The is *the only interface* to interact with the internals of the application.
+
+[source, go]
+----
+type CoreInterface interface {
+	// Commit
+	//
+	// Add/'commit' a command to core.
+	Commit(command cmd.Command)
+
+	// GetCommandByName
+	//
+	// Get a Command object for a command, using the name of the command as
+	// a parameter.
+	GetCommandByName(commandName string) (cmd.Command, error)
+
+	// GetALlCommands
+	//
+	// Get all commands in the current core state.
+	GetALlCommands() []cmd.Command
+
+	// RemoveCommandByName
+	//
+	// Remove a command, specifying which command by name of the command.
+	RemoveCommandByName(commandName string) error
+
+	// EditCommand
+	//
+	// Edit a command, specifying which command by name of the command.
+	EditCommand(commandName string)
+
+	// RunCommand
+	//
+	// Run a command, specifying which command by name of the command.
+	RunCommand(commandName string)
+}
+----
+
+=== Example usage
+
+Here is an example of using the core package to commit a command.

@@ -28,12 +28,29 @@ var commitCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := cli.Commit()
 		if err != nil {
-			fmt.Printf("Unable to commit command: %v\n", err)
+			fmt.Printf("Error committing command: %v\n", err)
+		}
+	},
+}
+
+// command for committing an edited script to a command
+var rmCommand = &cobra.Command{
+	Use:   "rm",
+	Short: "Remove a command by name.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := cli.RM(commandName)
+		if err != nil {
+			fmt.Printf("Error removing command: %v\n", err)
 		}
 	},
 }
 
 func init() {
+	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
+	err := rmCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
 }
 
 func main() {
@@ -44,6 +61,8 @@ func main() {
 	}
 
 	rootCmd.AddCommand(commitCommand)
+
+	rootCmd.AddCommand(rmCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
