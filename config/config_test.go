@@ -20,5 +20,5 @@ func TestReadConfig(t *testing.T) {
 		return
 	}
 
-	assert.Equal(t, testSubcommands, config.commands)
+	assert.Equal(t, testSubcommands, config.Commands)
 }

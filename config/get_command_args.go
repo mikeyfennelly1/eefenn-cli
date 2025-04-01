@@ -14,7 +14,7 @@ func GetCommandArgs(commandName string) ([]cmd_config.Arg, error) {
 		return nil, err
 	}
 
-	for _, sc := range currentConfig.commands {
+	for _, sc := range currentConfig.Commands {
 		if sc.Name == commandName {
 			return sc.Args, nil
 		}

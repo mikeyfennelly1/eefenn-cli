@@ -10,7 +10,7 @@ const EefennCLIConfig = "/usr/lib/eefenn-cli/eefenn-cli.config.json"
 
 type Config struct {
 	RemoteRepoURL string               `json:"remoteRepoURL"`
-	commands      []cmd_config.Command `json:"subcommands"`
+	Commands      []cmd_config.Command `json:"subcommands"`
 }
 
 // writeToConfigFile
@@ -50,13 +50,13 @@ func (c *Config) getCommandByName(name string) cmd_config.Command {
 	var targetIndex int
 
 	// find the index of the item whose Name matches the parameter 'name'
-	for index, sc := range c.commands {
+	for index, sc := range c.Commands {
 		if sc.Name == name {
 			targetIndex = index
 		}
 	}
 
-	return c.commands[targetIndex]
+	return c.Commands[targetIndex]
 }
 
 func (c *Config) Update() error {

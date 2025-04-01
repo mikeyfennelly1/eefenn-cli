@@ -21,7 +21,7 @@ func (config *Config) RemoveCommandByName(name string) error {
 
 // RemoveCommandById
 //
-// remove a command using the commands id (first 8 characters of
+// remove a command using the Commands id (first 8 characters of
 // the command's hash) as a parameter
 func RemoveCommandById(id string) error {
 	config, err := GetCurrentConfig()

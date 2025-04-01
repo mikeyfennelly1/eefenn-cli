@@ -20,7 +20,7 @@ func GetCommand(commandName string) (*int, *cmd_config.Command, error) {
 		return nil, nil, err
 	}
 
-	for index, command := range currentConfig.Subcommands {
+	for index, command := range currentConfig.Commands {
 		if command.Name == commandName {
 			return &index, &command, nil
 		}
