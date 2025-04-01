@@ -49,6 +49,9 @@ type EefennCLIDirectoryTree struct{}
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
 func (edt *EefennCLIDirectoryTree) CreateSubcommandDirTree(cmd cmd_config.Command) error {
+	if os.Geteuid() != 0 {
+		return fmt.Errorf("You must have root permissions to perform changes to CLI core\n")
+	}
 	// create the directory that contains dependencies and script for the command
 	subCommandDependenciesDir := getSubcommandDependenciesDirectory(cmd.Name)
 
