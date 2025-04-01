@@ -1,0 +1,5 @@
+needs:
+  - something-else.txt
+name: echo-something
+script: write-something-to-stdout.sh
+description: Just echoes something
