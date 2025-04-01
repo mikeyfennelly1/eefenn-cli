@@ -8,9 +8,9 @@ import (
 	"github.com/eefenn/eefenn-cli/utils"
 )
 
-func Add(subcommand cmd_config.Subcommand) error {
+func Add(command cmd_config.Command) error {
 	// if the command already exists, return an error
-	if utils.CommandExists(subcommand.Name) {
+	if utils.CommandExists(command.Name) {
 		return fmt.Errorf("Command already exists.\n")
 	}
 
@@ -19,7 +19,7 @@ func Add(subcommand cmd_config.Subcommand) error {
 	if err != nil {
 		return err
 	}
-	currentConfig.AddCommand(subcommand)
+	currentConfig.AddCommand()
 	currentConfig.Update()
 
 	// create the directory structure for the command
