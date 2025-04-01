@@ -46,7 +46,6 @@ func GetCurrentConfig() (Config, error) {
 	return config, nil
 }
 
-//
 func (c *Config) getCommandByName(name string) cmd_config.Command {
 	var targetIndex int
 
