@@ -7,9 +7,36 @@ import (
 )
 
 type CoreInterface interface {
-	Commit(command cmd_config.Command)
+	// CommitCommand
+	//
+	// Add/'commit' a command to core.
+	CommitCommand(command cmd_config.Command)
 
-	List()
+	// GetCommandByName
+	//
+	// Get a Command object for a command, using the name of the command as
+	// a parameter.
+	GetCommandByName(commandName string) (cmd_config.Command, error)
+
+	// GetALlCommands
+	//
+	// Get all commands in the current core state.
+	GetALlCommands() []cmd_config.Command
+
+	// RemoveCommandByName
+	//
+	// Remove a command, specifying which command by name of the command.
+	RemoveCommandByName(commandName string) error
+
+	// EditCommand
+	//
+	// Edit a command, specifying which command by name of the command.
+	EditCommand(commandName string)
+
+	// RunCommand
+	//
+	// Run a command, specifying which command by name of the command.
+	RunCommand(commandName string)
 }
 
 type Core struct {
