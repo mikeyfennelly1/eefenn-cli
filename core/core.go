@@ -72,7 +72,7 @@ type Core struct {
 func (c *Core) Commit(command cmd.Command) error {
 	var edt command_dir.EefennCLIDirectoryTree
 
-	err := edt.CreateCommandDirTree(command)
+	err := edt.CreateCMDDirTree(command)
 	if err != nil {
 		return err
 	}

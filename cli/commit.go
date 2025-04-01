@@ -21,7 +21,7 @@ func Commit() error {
 		return err
 	}
 	// If the cmd already exists, return an error
-	if core_utils.CommandExists(cmd.Name) {
+	if core_utils.CMDExists(cmd.Name) {
 		return fmt.Errorf("Command already exists.\n")
 	}
 
@@ -31,22 +31,31 @@ func Commit() error {
 	}
 
 	// Add the command to the config file
-	err = core.Config.AddCommand(*cmd)
+	err = core.Config.AddCMD(*cmd)
 	if err != nil {
 		return err
 	}
 	// Create the directory tree for the command
-	err = core.DirectoryTree.CreateCommandDirTree(*cmd)
+	err = core.DirectoryTree.CreateCMDDirTree(*cmd)
 	if err != nil {
 		return err
 	}
 	// Copy the script for the command from the pwd to the script
 	// in newly created directory tree.
-	err = core.DirectoryTree.CopyScriptToCommandDirectory(*cmd)
+	err = core.DirectoryTree.CopyScriptToCMDDir(*cmd)
+	if err != nil {
+		return err
+	}
+
+	err = core.DirectoryTree.CopyDependenciesToDependenciesDir(*cmd)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("Added new command: %s\n", cmd.Name)
 	return nil
+}
+
+func configIsValid() (bool, error) {
+	return true, nil
 }

@@ -19,6 +19,6 @@ func TestGetAbsoluteSubcommandDirname(t *testing.T) {
 
 func TestGetSubcommandDependenciesDirectory(t *testing.T) {
 	expected := "/usr/lib/eefenn-cli/test/test.dependencies"
-	actual := getSubcommandDependenciesDirectory("test")
+	actual := getCMDDependenciesDir("test")
 	assert.Equal(t, expected, actual)
 }

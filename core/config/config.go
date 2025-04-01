@@ -22,7 +22,7 @@ type ConfigInterface interface {
 	//
 	// update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 	// marshalled subcommand data.
-	AddCommand(subcommand cmd.Command) error
+	AddCMD(subcommand cmd.Command) error
 
 	// GetCommandArgs
 	//
@@ -128,7 +128,7 @@ func (c *Config) update() error {
 //
 // update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled subcommand data.
-func (c *Config) AddCommand(subcommand cmd.Command) error {
+func (c *Config) AddCMD(subcommand cmd.Command) error {
 	c.Commands = append(c.Commands, subcommand)
 	err := c.update()
 	if err != nil {

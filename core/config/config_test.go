@@ -24,7 +24,7 @@ func TestConfig_AddCommand(t *testing.T) {
 	currentConfig, err := GetCurrentConfig()
 	require.NoError(t, err)
 
-	err = currentConfig.AddCommand(testCMD)
+	err = currentConfig.AddCMD(testCMD)
 	require.NoError(t, err)
 }
 

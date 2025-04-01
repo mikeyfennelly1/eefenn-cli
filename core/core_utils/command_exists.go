@@ -1,6 +1,6 @@
 package core_utils
 
-func CommandExists(commandName string) bool {
+func CMDExists(commandName string) bool {
 	_, name, _ := GetCommand(commandName)
 	if name != nil {
 		return false
