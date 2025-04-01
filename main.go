@@ -15,7 +15,7 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ef", // The name of the command
-	Short: "A command line tool for automating web application tasks.",
+	Short: "A command line tool for automating shell tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -26,16 +26,14 @@ var commitCommand = &cobra.Command{
 	Use:   "commit",
 	Short: "Commit an edited script to a command.",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := cli.Commit(configFilePath)
+		err := cli.Commit()
 		if err != nil {
-			fmt.Printf("Unable to edit command '%s': %v\n", commandName, err)
+			fmt.Printf("Unable to commit command '%s': %v\n", commandName, err)
 		}
 	},
 }
 
 func init() {
-	// add flags to the 'ef commit' command
-	commitCommand.Flags().StringVarP(&configFilePath, "config", "n", "", "The path the the config.yaml file for the command.")
 }
 
 func main() {
@@ -46,10 +44,6 @@ func main() {
 	}
 
 	rootCmd.AddCommand(commitCommand)
-	err := commitCommand.MarkFlagRequired("config")
-	if err != nil {
-		return
-	}
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

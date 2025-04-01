@@ -5,12 +5,18 @@ import (
 	"github.com/eefenn/eefenn-cli/cmd"
 	"github.com/eefenn/eefenn-cli/core"
 	"github.com/eefenn/eefenn-cli/core/core_utils"
+	"os"
 )
 
 // Add a command by .yaml configuration file
-func Commit(filePath string) error {
+func Commit() error {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	configInPWD := fmt.Sprintf("%s/config.yaml", pwd)
 	// Parse the command from a Yaml file at location 'filePath'
-	cmd, err := cmd.ParseCommandFromYaml(filePath)
+	cmd, err := cmd.ParseCommandFromYaml(configInPWD)
 	if err != nil {
 		return err
 	}

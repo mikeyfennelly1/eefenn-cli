@@ -24,6 +24,23 @@ type Command struct {
 	Args []Arg
 }
 
+type CommandYaml struct {
+	// alias of the script
+	Name string `yaml:"name"`
+
+	// the script which the command is an alias for
+	Script string `yaml:"script"`
+
+	// array of filepaths that the script needs to run
+	Needs []string `yaml:"needs"`
+
+	// description for what the script does
+	Description string `yaml:"description"`
+
+	// the arguments to the command
+	Args []Arg
+}
+
 type Arg struct {
 	Name        string `json:"name"`
 	Type        string `json:"type"`
