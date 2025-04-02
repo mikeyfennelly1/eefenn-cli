@@ -28,7 +28,7 @@ const EefennCLIRoot = "/usr/lib/eefenn-cli"
 //   - Methods for interacting with a command's files, such as creating, removing and
 //     moving command subdirectories to other directories in the filesystem for editing.
 type EefennCLIDirectoryTreeInterface interface {
-	// CreateSubcommandDirTree
+	// CreateCMDDirTree
 	//
 	// Create an entry in /usr/lib/eefenn-cli for the Subcommand.
 	CreateCMDDirTree(cmd cmd_config.Command) error
@@ -41,7 +41,7 @@ type EefennCLIDirectoryTreeInterface interface {
 
 type eefennCLIDirectoryTree struct{}
 
-// CreateSubcommandDirTree
+// CreateCMDDirTree
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
 func (edt *eefennCLIDirectoryTree) CreateCMDDirTree(cmd cmd_config.Command) error {

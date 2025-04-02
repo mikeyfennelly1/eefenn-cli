@@ -1,3 +1,10 @@
 name: test-command
 script: test-eefenn.sh
 description: This is a test command.
+needs:
+  - ./file1
+  - ./file2
+args:
+  - name: arg1
+    type: string
+    description: A test argument

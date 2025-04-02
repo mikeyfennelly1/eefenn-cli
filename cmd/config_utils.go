@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"os"
 )
+
+const configYamlPath = "./config.yaml"
 
 // GetCMDFromPWD
 // Looks in the pwd for a config file.
@@ -13,14 +16,14 @@ import (
 //
 // Returns the appropriate error operation if this fails.
 func GetCMDFromPWD() (*Command, error) {
-	// get the config.yaml in the pwd.
-	pYAML, err := getConfigYamlInPWD()
+	// ensure that the config.yaml exists in the pwd
+	yamlContents, err := os.ReadFile(configYamlPath)
 	if err != nil {
 		return nil, err
 	}
 
 	// unmarshal a command from the config.yaml
-	pCMD, err := unMarshalCommandFromYaml(pYAML)
+	pCMD, err := unMarshalCommandFromYamlContents(yamlContents)
 	if err != nil {
 		return nil, err
 	}
@@ -38,28 +41,6 @@ func GetCMDFromPWD() (*Command, error) {
 	return pCMD, nil
 }
 
-func getConfigYamlInPWD() (*os.File, error) {
-	pwd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	configYamlPath := fmt.Sprintf("%s/%s", pwd, "config.yaml")
-	configYamlFile, err := os.OpenFile(configYamlPath, os.O_RDONLY, 0666)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func(configYamlFile *os.File) {
-		err := configYamlFile.Close()
-		if err != nil {
-			panic("Error closing config.yaml. Exiting...")
-		}
-	}(configYamlFile)
-
-	return configYamlFile, nil
-}
-
 // Returns an error if the directory tree is not valid for the command.
 func validateDirectoryTreeWithCMD(cmd *Command) error {
 	// ensure script is findable at specified
@@ -70,8 +51,7 @@ func validateDirectoryTreeWithCMD(cmd *Command) error {
 	}
 
 	for _, dependency := range cmd.Needs {
-		// check that all dependencies are findable
-		// at respective positions relative to script
+		// check that all dependencies exist
 		_, err := os.Stat(dependency)
 		if err != nil {
 			return err
@@ -81,8 +61,15 @@ func validateDirectoryTreeWithCMD(cmd *Command) error {
 	return nil
 }
 
-func unMarshalCommandFromYaml(yamlConfig *os.File) (*Command, error) {
-	return nil, nil
+func unMarshalCommandFromYamlContents(yamlConfigContents []byte) (*Command, error) {
+	var cmd Command
+	err := yaml.Unmarshal(yamlConfigContents, &cmd)
+	if err != nil {
+		fmt.Println("Error parsing YAML:", err)
+		return nil, err
+	}
+
+	return &cmd, nil
 }
 
 // Returns an error if syntax of passed
@@ -109,7 +96,7 @@ func validateCMDSyntax(cmd *Command) error {
 				return fmt.Errorf("invalid argument description")
 			}
 			// check for invalid type for argument
-			switch arg.Name {
+			switch arg.Type {
 			case "string":
 				continue
 			case "int":
