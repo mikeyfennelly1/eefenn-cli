@@ -2,140 +2,67 @@ package main
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/commands"
-	"github.com/eefenn/eefenn-cli/subcommand"
+	"github.com/eefenn/eefenn-cli/cli"
 	"github.com/spf13/cobra"
 	"os"
 )
 
 var (
-	file        string
-	name        string
-	description string
-	commandName string
+	configFilePath string
+	commandName    string
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ef", // The name of the command
-	Short: "A command line tool for automating web application tasks.",
+	Short: "A command line tool for automating shell tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Usage: ef <subcommand>")
+		cmd.Help()
 	},
 }
 
-var ascCommand = &cobra.Command{
-	Use:   "add",
-	Short: "Add a subcommand to eefenn-cli",
+// command for committing an edited script to a command
+var commitCommand = &cobra.Command{
+	Use:   "commit",
+	Short: "Commit an edited script to a command.",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Validate that the file exists
-		if _, err := os.Stat(file); os.IsNotExist(err) {
-			fmt.Println("Error: File does not exist:", file)
-			return
-		}
-
-		thisSubcommand := subcommand.CreateSubCommand(name, file, description)
-		err := commands.Add(thisSubcommand)
+		err := cli.Commit()
 		if err != nil {
-			fmt.Printf("Could not create subcommand: %v", err)
-			return
-		}
-		fmt.Println(thisSubcommand.Hash)
-	},
-}
-
-var lsCommand = &cobra.Command{
-	Use:   "ls",
-	Short: "List all subcommands",
-	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.LS()
-		if err != nil {
-			return
+			fmt.Printf("Error committing command: %v\n", err)
 		}
 	},
 }
 
+// command for committing an edited script to a command
 var rmCommand = &cobra.Command{
 	Use:   "rm",
-	Short: "Remove a command",
+	Short: "Remove a command by name.",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.RemoveSubcommand(commandName)
+		err := cli.RM(commandName)
 		if err != nil {
-			return
+			fmt.Printf("Error removing command: %v\n", err)
 		}
-	},
-}
-
-var runCommand = &cobra.Command{
-	Use:   "run",
-	Short: "Run an eefenn-cli command",
-	Run: func(cmd *cobra.Command, args []string) {
-		result, err := commands.Run(commandName)
-		if err != nil {
-			fmt.Printf("Unable to run command '%s': %v\n", commandName, err)
-		}
-
-		fmt.Printf(string(result))
-	},
-}
-
-var describeCommand = &cobra.Command{
-	Use:   "describe",
-	Short: "Print the description of a command.",
-	Run: func(cmd *cobra.Command, args []string) {
-		err := commands.Describe(commandName)
-		if err != nil {
-			fmt.Printf("%v", err)
-		}
-
 	},
 }
 
 func init() {
-	ascCommand.Flags().StringVarP(&name, "name", "n", "", "Name of the entity (required)")
-	ascCommand.Flags().StringVarP(&file, "file", "f", "", "Path to the file in the current directory (required)")
-	ascCommand.Flags().StringVarP(&description, "description", "d", "", "Description of what the command does.")
-
-	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to remove.")
-
-	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
-
-	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "The name of the command you want to run.")
-
-	// Mark flags as required
-	err := ascCommand.MarkFlagRequired("name")
-	if err != nil {
-		return
-	}
-	err = ascCommand.MarkFlagRequired("file")
-	if err != nil {
-		return
-	}
-	err = ascCommand.MarkFlagRequired("description")
-	if err != nil {
-		return
-	}
-
-	err = rmCommand.MarkFlagRequired("name")
+	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
+	err := rmCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
 }
 
 func main() {
+	// ensure that binary is running with root permissions before running
 	if os.Geteuid() != 0 {
 		fmt.Println("You must be superuser to run this binary.")
 		return
 	}
-	rootCmd.AddCommand(ascCommand)
 
-	rootCmd.AddCommand(lsCommand)
+	rootCmd.AddCommand(commitCommand)
 
 	rootCmd.AddCommand(rmCommand)
-
-	rootCmd.AddCommand(runCommand)
-
-	rootCmd.AddCommand(describeCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

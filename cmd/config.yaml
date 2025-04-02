@@ -1,0 +1,3 @@
+name: test-command
+script: test-eefenn.sh
+description: This is a test command.
