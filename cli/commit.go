@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/eefenn/eefenn-cli/cmd"
 	"github.com/eefenn/eefenn-cli/core"
-	"github.com/eefenn/eefenn-cli/core/core_utils"
 	"os"
 )
 
@@ -29,7 +28,7 @@ func Commit() error {
 	}
 
 	// If the thisCMD already exists, return an error
-	if core_utils.CMDExists(thisCMD.Name) {
+	if core.CMDExists(thisCMD.Name) {
 		return fmt.Errorf("Command already exists.\n")
 	}
 
