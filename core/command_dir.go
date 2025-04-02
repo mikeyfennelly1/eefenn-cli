@@ -39,12 +39,12 @@ type EefennCLIDirectoryTreeInterface interface {
 	RemoveCommandDirectoryRecursively(commandName string) error
 }
 
-type EefennCLIDirectoryTree struct{}
+type eefennCLIDirectoryTree struct{}
 
 // CreateSubcommandDirTree
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
-func (edt *EefennCLIDirectoryTree) CreateCMDDirTree(cmd cmd_config.Command) error {
+func (edt *eefennCLIDirectoryTree) CreateCMDDirTree(cmd cmd_config.Command) error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("You must have root permissions to perform changes to CLI core\n")
 	}
@@ -74,7 +74,7 @@ func (edt *EefennCLIDirectoryTree) CreateCMDDirTree(cmd cmd_config.Command) erro
 // CreateEmptySubcommandShellFile
 //
 // Create an empty shell file of the name <command-hash>.sh
-func (edt *EefennCLIDirectoryTree) createEmptyShellScriptForCMD(cmd cmd_config.Command) (*os.File, error) {
+func (edt *eefennCLIDirectoryTree) createEmptyShellScriptForCMD(cmd cmd_config.Command) (*os.File, error) {
 	fileName := getSubcommandShellFileAbsPath(cmd.Name)
 
 	// create the file
@@ -89,7 +89,7 @@ func (edt *EefennCLIDirectoryTree) createEmptyShellScriptForCMD(cmd cmd_config.C
 // RemoveCommandDirectoryRecursively
 //
 // remove a command directory recursively by command hash
-func (edt *EefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName string) error {
+func (edt *eefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName string) error {
 	dirname := getAbsoluteSubcommandDirname(commandName)
 
 	err := os.RemoveAll(dirname)
@@ -103,7 +103,7 @@ func (edt *EefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName
 // CopyScriptToCMDDir
 //
 // Move a shell script to its command's directory
-func (edt *EefennCLIDirectoryTree) CopyScriptToCMDDir(cmd cmd_config.Command) error {
+func (edt *eefennCLIDirectoryTree) CopyScriptToCMDDir(cmd cmd_config.Command) error {
 	sourceFile, err := os.OpenFile(cmd.Script, os.O_RDONLY, 0666)
 	if err != nil {
 		return err
@@ -127,7 +127,7 @@ func (edt *EefennCLIDirectoryTree) CopyScriptToCMDDir(cmd cmd_config.Command) er
 // CopyScriptToCMDDir
 //
 // Move a shell script to its command's directory
-func (edt *EefennCLIDirectoryTree) CopyDependenciesToDependenciesDir(cmd cmd_config.Command) error {
+func (edt *eefennCLIDirectoryTree) CopyDependenciesToDependenciesDir(cmd cmd_config.Command) error {
 	for _, dependency := range cmd.Needs {
 		err := edt.copyDependencyFileToDependencyDir(dependency, cmd)
 		if err != nil {
@@ -138,7 +138,7 @@ func (edt *EefennCLIDirectoryTree) CopyDependenciesToDependenciesDir(cmd cmd_con
 	return nil
 }
 
-func (edt *EefennCLIDirectoryTree) copyDependencyFileToDependencyDir(dependencyPath string, cmd cmd_config.Command) error {
+func (edt *eefennCLIDirectoryTree) copyDependencyFileToDependencyDir(dependencyPath string, cmd cmd_config.Command) error {
 	dependencyFile, err := os.OpenFile(dependencyPath, os.O_RDONLY, 0666)
 	if err != nil {
 		return err
