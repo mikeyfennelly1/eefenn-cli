@@ -72,7 +72,7 @@ func (c *Core) GetCommandByName(commandName string) (*cmd.Command, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("could not find command: %s", commandName)
+	return nil, fmt.Errorf("command does not exist: %s", commandName)
 }
 
 // GetALlCommands
@@ -103,14 +103,15 @@ func (c *Core) Commit(command cmd.Command) error {
 		return fmt.Errorf("Core is not properly initialized\n")
 	}
 
-	if CmdExists(c, command.Name) {
-		return fmt.Errorf("Command already exists\n")
+	pCMD, err := c.GetCommandByName(command.Name)
+	if pCMD != nil {
+		return fmt.Errorf("command '%s' already exists\n\nUse the 'ef rm' command to remove this command, or 'ef edit' to edit the command.", command.Name)
 	}
 
 	var edt eefennCLIDirectoryTree
 
 	// Add the command to the config file
-	err := c.config.addCMD(command)
+	err = c.config.addCMD(command)
 	if err != nil {
 		return err
 	}
@@ -144,11 +145,13 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 		return fmt.Errorf("Core is not properly initialized\n")
 	}
 
-	if CmdExists(c, commandName) {
-		return fmt.Errorf("Command already exists\n")
+	pCMD, err := c.GetCommandByName(commandName)
+	if err != nil {
+		return err
 	}
-
-	fmt.Println("Got past CMDExists...")
+	if pCMD == nil {
+		return fmt.Errorf("command '%s' does not exist", commandName)
+	}
 
 	currentConfig, err := getCurrentConfig()
 	if err != nil {

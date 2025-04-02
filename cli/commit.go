@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/eefenn/eefenn-cli/cmd"
 	"github.com/eefenn/eefenn-cli/core"
 )
@@ -23,6 +24,8 @@ func Commit() error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Added command: %s\n", (*pCMD).Name)
 
 	return nil
 }
