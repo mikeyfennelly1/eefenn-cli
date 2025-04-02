@@ -11,6 +11,7 @@ import (
 	cmd "github.com/eefenn/eefenn-cli/cmd"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -61,7 +62,7 @@ type CoreInterface interface {
 	// RunCommand
 	//
 	// Run a command, specifying which command by name of the command.
-	RunCommand(commandName string)
+	RunCommandScriptInPWD(commandName string)
 }
 
 type Core struct {
@@ -149,8 +150,27 @@ func copyFile(src string, dst string) error {
 	return os.Chmod(dst, srcInfo.Mode())
 }
 
-func (c *Core) RunCommand(commandName string) {
-	panic("Implement me")
+// If the script for the command is in the pwd
+func (c *Core) RunCommandScriptInPWD(command cmd.Command) error {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	scriptPath := fmt.Sprintf("%s/%s", pwd, command)
+
+	// Create the command
+	script := exec.Command("/bin/sh", scriptPath)
+
+	script.Stdout = os.Stdout
+	script.Stderr = os.Stderr
+
+	err = script.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Commit
