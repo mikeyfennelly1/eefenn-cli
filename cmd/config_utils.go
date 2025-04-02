@@ -50,7 +50,7 @@ func validateDirectoryTreeWithCMD(cmd *Command) error {
 		return err
 	}
 
-	for _, dependency := range cmd.Needs {
+	for _, dependency := range cmd.Dependencies {
 		// check that all dependencies exist
 		_, err := os.Stat(dependency)
 		if err != nil {

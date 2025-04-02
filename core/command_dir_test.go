@@ -7,11 +7,11 @@ import (
 )
 
 var testCMD = cmd.Command{
-	Name:        "test",
-	Script:      "test.sh",
-	Needs:       nil,
-	Description: "test description for test-eefenn-cli.config.json",
-	Args:        nil,
+	Name:         "test",
+	Script:       "test.sh",
+	Dependencies: nil,
+	Description:  "test description for test-eefenn-cli.config.json",
+	Args:         nil,
 }
 
 func TestEefennCLIDirectoryTree_CreateSubcommandDirTree(t *testing.T) {

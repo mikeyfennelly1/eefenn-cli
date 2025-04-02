@@ -22,10 +22,10 @@ func TestUnMarshalCommandFromYamlContents_NameScriptDescription(t *testing.T) {
 func TestUnMarshalCommandFromYamlContents_NameScriptDescriptionArgs(t *testing.T) {
 	input := "name: test-command\nscript: test-eefenn.sh\ndescription: This is a test command.\nneeds:\n  - ./file1\n  - ./file2\nargs:\n  - name: arg1\n    type: string\n    description: A test argument"
 	expected := &Command{
-		Name:        "test-command",
-		Script:      "test-eefenn.sh",
-		Description: "This is a test command.",
-		Needs:       []string{"./file1", "./file2"},
+		Name:         "test-command",
+		Script:       "test-eefenn.sh",
+		Description:  "This is a test command.",
+		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
 				Name:        "arg1",
@@ -41,10 +41,10 @@ func TestUnMarshalCommandFromYamlContents_NameScriptDescriptionArgs(t *testing.T
 
 func TestValidateCMDSyntax(t *testing.T) {
 	validCMD := &Command{
-		Name:        "test-command",
-		Script:      "test-eefenn.sh",
-		Description: "This is a test command.",
-		Needs:       []string{"./file1", "./file2"},
+		Name:         "test-command",
+		Script:       "test-eefenn.sh",
+		Description:  "This is a test command.",
+		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
 				Name:        "arg1",
@@ -59,10 +59,10 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	// test a command where there is no name
 	noNameCMD := &Command{
-		Name:        "",
-		Script:      "test-eefenn.sh",
-		Description: "This is a test command.",
-		Needs:       []string{"./file1", "./file2"},
+		Name:         "",
+		Script:       "test-eefenn.sh",
+		Description:  "This is a test command.",
+		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
 				Name:        "arg1",
@@ -77,10 +77,10 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	// test a command where the description is empty string
 	noDescriptionCMD := &Command{
-		Name:        "test-cmd",
-		Script:      "test-eefenn.sh",
-		Description: "",
-		Needs:       []string{"./file1", "./file2"},
+		Name:         "test-cmd",
+		Script:       "test-eefenn.sh",
+		Description:  "",
+		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
 				Name:        "arg1",
@@ -95,10 +95,10 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	// test a command where the arg type is invalid
 	invalidArgCMD := &Command{
-		Name:        "test-cmd",
-		Script:      "test-eefenn.sh",
-		Description: "description",
-		Needs:       []string{"./file1", "./file2"},
+		Name:         "test-cmd",
+		Script:       "test-eefenn.sh",
+		Description:  "description",
+		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
 				Name:        "arg1",
@@ -113,10 +113,10 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	// test a command where the arg type is invalid
 	emptyArgNameCMD := &Command{
-		Name:        "test-cmd",
-		Script:      "test-eefenn.sh",
-		Description: "description",
-		Needs:       []string{"./file1", "./file2"},
+		Name:         "test-cmd",
+		Script:       "test-eefenn.sh",
+		Description:  "description",
+		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
 				Name:        "",
@@ -131,10 +131,10 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	// test a command where the arg type is invalid
 	emptyArgDescriptionCMD := &Command{
-		Name:        "test-cmd",
-		Script:      "test-eefenn.sh",
-		Description: "description",
-		Needs:       []string{"./file1", "./file2"},
+		Name:         "test-cmd",
+		Script:       "test-eefenn.sh",
+		Description:  "description",
+		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
 				Name:        "name",

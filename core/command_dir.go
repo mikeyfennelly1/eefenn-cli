@@ -128,7 +128,7 @@ func (edt *eefennCLIDirectoryTree) CopyScriptToCMDDir(cmd cmd_config.Command) er
 //
 // Move a shell script to its command's directory
 func (edt *eefennCLIDirectoryTree) CopyDependenciesToDependenciesDir(cmd cmd_config.Command) error {
-	for _, dependency := range cmd.Needs {
+	for _, dependency := range cmd.Dependencies {
 		err := edt.copyDependencyFileToDependencyDir(dependency, cmd)
 		if err != nil {
 			return err
