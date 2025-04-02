@@ -1,10 +1,6 @@
 = eefenn-cli
 :toc:
 
-A command line tool to automate eefenn tasks.
-
-This command line tool supports utilities that essentially allows you to perform scripts based on subcommands. You can customize this tool, but it also comes with provided scripts, and subcommands.
-
 == Install
 
 [source, bash]
@@ -21,63 +17,81 @@ go build -o eefenn-cli-install
 
 This will create a directory at `/usr/lib/eefenn-cli` and create a directory for scripts and a file (`eefenn.config.json`) to configure the tool.
 
-== Updating your tool to be up to date with remote scripts
+== What is eefenn-cli?
 
-To update the eefenn-cli tool with the remote repository, run the command:
+A tool to create and manage scripts - with a bit of extra convenience features.
 
-[source, bash]
-----
-eefenn tidy
-----
+It also provides a way to manage scripts that have filesystem dependencies, where the script is dependant on both file contents and file position relative to the script. An example would be a script that requires a file at the position _<script_working_directory>/subdirectory/<file>_.
 
-== Customizing the tool
+== Seemless filesystem recreation
 
-You can customize this tool and add your own automation scripts. Each script will have
+If the script depends on the file, this filesystem configuration can be committed to eefenn-cli, and the files can be removed. The command line interface for eefenn-cli creates the illusion of runing the script globally, with no issue of depndency positions. In reality it stores the configuration you previously committed, unpacks it at the current location, runs the command, and cleans up after seemlessly.
 
-1. A *subcommand* for this cli tool.
-2. A *description* of what the script for the command does.
+== Creating a command
 
-=== How to add a subcommand
+=== Prerequisites: Config, and script position.
 
-After you have the basic install done, you can customize your tool by adding a subcommand via the `eefenn asc` command:
+To create an eefenn-cli you have to create a *config.yaml file in the same directory as your script*.
+
+Here is an example:
 
 [source, bash]
 ----
-eefenn asc=my-command=./my-command-script.sh
+(base) ➜  test-eefenn-cli tree
+.
+├── config.yaml
+├── another_file.txt
+├── echo-something.sh
+└── something.txt
+
+0 directories, 4 files
 ----
 
-==== What happens internally?
+As you can see from the above snippet, the file `config.yaml` is in the same directory as `echo-something.sh`
 
-eefenn-cli will:
+=== Writing the config.yaml file
 
-1. Parse your command.
-2. Generate a unique hash for your custom command.
-3. Create a JSON object for the command in `/usr/lib/eefenn/eefenn-cli.config.json`.
+Here is an overview of the commands in an eefenn-cli _config.yaml_ file:
 
-This object will look like this:
+[options="header"]
+[cols="1,1,3"]
+|===
+| Title | type | Description
 
-[source,json]
+| *name* | _string_ | The name of the command that you want to create. When you `commit` your command to eefenn-cli, you will be able to run it by the run subcommand.
+| *script* | _file path_ | The name of the script that you want your command to be an alias of.
+| *description* | _string_ | A description that you can use further down the line to describe what your command does.
+| *needs* | _[]file path_ / nil | An array of paths to the files that the script depends on.
+|===
+
+== Example continued
+
+In the above example, I wanted to create a script that just echoes the content of _something.txt_ to standard output. This means that I will need to specify all of this in my config file. In other words, my command's script depends on _something.txt_. I also want to call my new command '_cool-command_'. Here is my config file:
+
+[source, yaml]
 ----
-"my-command" : {
-  "command-hash" : "b9f8c69c0e3e7f0f20d8e2b51c320a2f"
-}
+# A cool name for my command
+name: cool-command
+
+# The script for my command, relative to where this config.yaml file is.
+script: ./echo-something.sh
+
+# a description of what my command does.
+description: "This command just echoes the content of a text file, which is saved as a dependency of this command."
+
+# The dependencies of my script (in this case './echo-something.sh').
+needs:
+  - ./text.txt
 ----
 
-When you run your command hereafter, eefenn-cli will
+==== Creating the command, by `ef commit`
 
-a. Look in eefenn-cli.config.json and find your command.
-b. Get the command-hash.
-c. go to the directory created for your command-hash (in this case `/usr/lib/eefenn-cli/commands/b9f8c69c0e3e7f0f20d8e2b51c320a2f`)
-d. This directory will look something like this:
+To save your configuration so that you can use the command in future follow these steps:
 
-----
-b9f8c69c0e3e7f0f20d8e2b51c320a2f
-├── b9f8c69c0e3e7f0f20d8e2b51c320a2f.dependencies
-│   ├── file1.txt
-│   └── file2.txt
-└── b9f8c69c0e3e7f0f20d8e2b51c320a2f.sh
+1. Go to the directory that contains your command config.yaml
 
-1 directory, 3 files
-----
+2. Run `ef commit`
 
-The script will use the files in the `<command-hash>.dependencies` directory to complete work in the script.
+3. _That's it!_
+
+Now if you run your command from anywhere in your filesystem, it will recreate the directory structure your command relies on, execute your script, and clean up as if nothing happened.

@@ -5,23 +5,18 @@ type CommandInterface interface {
 	//
 	// Execute the script for the command with arguments.
 	Run(args []Arg)
-}
 
-type Command struct {
-	// alias of the script
-	Name string `json:"name"`
+	GetName() string
 
-	// the script which the command is an alias for
-	Script string `json:"script"`
+	GetScriptName() string
 
-	// array of filepaths that the script needs to run
-	Needs []string `json:"needs"`
+	GetDependencies() []string
 
-	// description for what the script does
-	Description string `json:"description"`
+	GetDescription() string
 
-	// the arguments to the command
-	Args []Arg
+	ToJSON() []byte
+
+	ToYAML() []byte
 }
 
 type CommandYaml struct {
@@ -32,13 +27,48 @@ type CommandYaml struct {
 	Script string `yaml:"script"`
 
 	// array of filepaths that the script needs to run
-	Needs []string `yaml:"needs"`
+	Dependencies []string `yaml:"dependencies"`
 
 	// description for what the script does
 	Description string `yaml:"description"`
 
 	// the arguments to the command
 	Args []Arg
+}
+
+func (c CommandYaml) ToJSON() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CommandYaml) ToYAML() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CommandYaml) Run(args []Arg) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CommandYaml) GetName() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CommandYaml) GetScriptName() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CommandYaml) GetDependencies() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CommandYaml) GetDescription() string {
+	//TODO implement me
+	panic("implement me")
 }
 
 type Arg struct {
