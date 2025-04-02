@@ -13,7 +13,7 @@ func TestGetSubCommandShellFileAbsPath(t *testing.T) {
 
 func TestGetAbsoluteSubcommandDirname(t *testing.T) {
 	expected := "/usr/lib/eefenn-cli/test"
-	actual := getAbsoluteSubcommandDirname("test")
+	actual := getAbsoluteSubcommandDir("test")
 	assert.Equal(t, expected, actual)
 }
 

@@ -7,6 +7,6 @@ import (
 
 func TestEefennCLIDirectoryTree_CreateSubcommandDirTree(t *testing.T) {
 	var edt eefennCLIDirectoryTree
-	err := edt.CreateCMDDirTree(testCMD)
+	err := edt.CreateCMDDir(testCMD)
 	require.NoError(t, err)
 }

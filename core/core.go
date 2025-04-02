@@ -59,10 +59,10 @@ type CoreInterface interface {
 	// subdirectories to the pwd.
 	RecursivelyCopyCommandDirToPWD(commandName string) error
 
-	// RunCommandScriptInPWD
+	// RunCommandInPWD
 	//
 	// Run a command, specifying which command by name of the command.
-	RunCommandScriptInPWD(command cmd.Command) error
+	RunCommandInPWD(command cmd.Command) error
 }
 
 type Core struct {
@@ -158,7 +158,7 @@ func copyFile(src string, dst string) error {
 }
 
 // If the script for the command is in the pwd
-func (c *Core) RunCommandScriptInPWD(command cmd.Command) error {
+func (c *Core) RunCommandInPWD(command cmd.Command) error {
 	pwd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -201,7 +201,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return err
 	}
 	// Create the directory tree for the command
-	err = c.directoryTree.CreateCMDDirTree(command)
+	err = c.directoryTree.CreateCMDDir(command)
 	if err != nil {
 		return err
 	}
@@ -217,7 +217,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return err
 	}
 
-	err = edt.CreateCMDDirTree(command)
+	err = edt.CreateCMDDir(command)
 	if err != nil {
 		return err
 	}

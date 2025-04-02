@@ -1,4 +1,4 @@
-// command_dir.go
+// command_files_controller.go
 //
 // For interacting with the directory tree that manages commands.
 //
@@ -16,7 +16,7 @@ import (
 
 const EefennCLIRoot = "/usr/lib/eefenn-cli"
 
-// EefennCLIDirectoryTreeInterface
+// CommandFilesController
 //
 // For interfacing with the directory tree starting from the root: /usr/lib/eefenn-cli
 //
@@ -27,11 +27,11 @@ const EefennCLIRoot = "/usr/lib/eefenn-cli"
 //     script paths for command scripts, dependency directory paths.
 //   - Methods for interacting with a command's files, such as creating, removing and
 //     moving command subdirectories to other directories in the filesystem for editing.
-type EefennCLIDirectoryTreeInterface interface {
-	// CreateCMDDirTree
+type CommandFilesController interface {
+	// CreateCMDDir
 	//
 	// Create an entry in /usr/lib/eefenn-cli for the Subcommand.
-	CreateCMDDirTree(cmd cmd_config.Command) error
+	CreateCMDDir(cmd cmd_config.Command) error
 
 	// RemoveCommandDirectoryRecursively
 	//
@@ -41,17 +41,17 @@ type EefennCLIDirectoryTreeInterface interface {
 
 type eefennCLIDirectoryTree struct{}
 
-// CreateCMDDirTree
+// CreateCMDDir
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
-func (edt *eefennCLIDirectoryTree) CreateCMDDirTree(cmd cmd_config.Command) error {
+func (edt *eefennCLIDirectoryTree) CreateCMDDir(cmd cmd_config.Command) error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("You must have root permissions to perform changes to CLI core\n")
 	}
 	// create the directory that contains dependencies and script for the command
-	subCommandDependenciesDir := getCMDDependenciesDir(cmd.Name)
+	subCommandDirName := getAbsoluteSubcommandDir(cmd.Name)
 
-	err := os.MkdirAll(subCommandDependenciesDir, 0755)
+	err := os.MkdirAll(subCommandDirName, 0755)
 	if err != nil {
 		return fmt.Errorf("Could not create directory for this Subcommand: %v\n", err)
 	}
@@ -90,7 +90,7 @@ func (edt *eefennCLIDirectoryTree) createEmptyShellScriptForCMD(cmd cmd_config.C
 //
 // remove a command directory recursively by command hash
 func (edt *eefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName string) error {
-	dirname := getAbsoluteSubcommandDirname(commandName)
+	dirname := getAbsoluteSubcommandDir(commandName)
 
 	err := os.RemoveAll(dirname)
 	if err != nil {
