@@ -4,7 +4,7 @@
 //
 // Author: Mikey Fennelly <mikeyp.fennelly@gmail.com>
 
-package command_dir
+package core
 
 import (
 	"fmt"

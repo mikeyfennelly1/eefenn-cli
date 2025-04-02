@@ -7,8 +7,8 @@
 package core
 
 import (
+	"fmt"
 	cmd "github.com/eefenn/eefenn-cli/cmd"
-	"github.com/eefenn/eefenn-cli/core/command_dir"
 	"github.com/eefenn/eefenn-cli/core/config"
 )
 
@@ -18,7 +18,7 @@ func GetCore() (*Core, error) {
 		return nil, err
 	}
 
-	var edt command_dir.EefennCLIDirectoryTree
+	var edt EefennCLIDirectoryTree
 
 	current_core := Core{
 		config:        config,
@@ -63,14 +63,22 @@ type CoreInterface interface {
 
 type Core struct {
 	config        config.config
-	directoryTree command_dir.EefennCLIDirectoryTree
+	directoryTree EefennCLIDirectoryTree
 }
 
 // Commit
 //
 // Add/'commit' a command to core.
 func (c *Core) Commit(command cmd.Command) error {
-	var edt command_dir.EefennCLIDirectoryTree
+	if c == nil {
+		return fmt.Errorf("Core is not properly initialized\n")
+	}
+
+	if cmdExists(*c, command.Name) {
+		return fmt.Errorf("Command already exists\n")
+	}
+
+	var edt EefennCLIDirectoryTree
 
 	// Add the command to the config file
 	err := c.config.addCMD(command)
@@ -103,6 +111,14 @@ func (c *Core) Commit(command cmd.Command) error {
 }
 
 func (c *Core) RemoveCommandByName(commandName string) error {
+	if c == nil {
+		return fmt.Errorf("Core is not properly initialized\n")
+	}
+
+	if cmdExists(*c, commandName) {
+		return fmt.Errorf("Command already exists\n")
+	}
+
 	currentConfig, err := config.getCurrentConfig()
 	if err != nil {
 		return err
@@ -113,7 +129,7 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 		return err
 	}
 
-	var edt command_dir.EefennCLIDirectoryTree
+	var edt EefennCLIDirectoryTree
 
 	err = edt.RemoveCommandDirectoryRecursively(commandName)
 	if err != nil {

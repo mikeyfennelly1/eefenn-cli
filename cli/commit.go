@@ -28,7 +28,7 @@ func Commit() error {
 	}
 
 	// If the thisCMD already exists, return an error
-	if core.CMDExists(thisCMD.Name) {
+	if core.cmdExists(thisCMD.Name) {
 		return fmt.Errorf("Command already exists.\n")
 	}
 

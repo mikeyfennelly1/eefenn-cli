@@ -1,4 +1,4 @@
-package command_dir
+package core
 
 import (
 	"github.com/eefenn/eefenn-cli/cmd"
