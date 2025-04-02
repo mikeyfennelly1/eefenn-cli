@@ -68,6 +68,18 @@ var describeCommand = &cobra.Command{
 	},
 }
 
+// command for describing a command
+var lsCommand = &cobra.Command{
+	Use:   "ls",
+	Short: "List all commands in eefenn-cli.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := cli.LS()
+		if err != nil {
+			fmt.Printf("Error describing command: %v\n", err)
+		}
+	},
+}
+
 func init() {
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
 	err := rmCommand.MarkFlagRequired("name")
@@ -103,6 +115,8 @@ func main() {
 	rootCmd.AddCommand(editCommand)
 
 	rootCmd.AddCommand(describeCommand)
+
+	rootCmd.AddCommand(lsCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
