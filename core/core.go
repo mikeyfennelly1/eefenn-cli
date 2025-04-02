@@ -37,12 +37,12 @@ type CoreInterface interface {
 	//
 	// Get a Command object for a command, using the name of the command as
 	// a parameter.
-	GetCommandByName(commandName string) (cmd.Command, error)
+	GetCommandByName(commandName string) (*cmd.Command, error)
 
 	// GetALlCommands
 	//
 	// Get all commands in the current core state.
-	GetALlCommands() []cmd.Command
+	GetALlCommands() ([]cmd.Command, error)
 
 	// RemoveCommandByName
 	//
@@ -65,14 +65,24 @@ type Core struct {
 	directoryTree eefennCLIDirectoryTree
 }
 
-func (c *Core) GetCommandByName(commandName string) (cmd.Command, error) {
-	//TODO implement me
-	panic("implement me")
+func (c *Core) GetCommandByName(commandName string) (*cmd.Command, error) {
+	for _, command := range c.config.Commands {
+		if command.Name == commandName {
+			return &command, nil
+		}
+	}
+
+	return nil, fmt.Errorf("could not find command: %s", commandName)
 }
 
-func (c *Core) GetALlCommands() []cmd.Command {
-	//TODO implement me
-	panic("implement me")
+// GetALlCommands
+// Gets all commands in config. If there are no commands,
+// will return an error
+func (c *Core) GetALlCommands() ([]cmd.Command, error) {
+	if len(c.config.Commands) == 0 {
+		return nil, fmt.Errorf("there are no commands")
+	}
+	return c.config.Commands, nil
 }
 
 func (c *Core) EditCommand(commandName string) {
@@ -93,7 +103,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return fmt.Errorf("Core is not properly initialized\n")
 	}
 
-	if CmdExists(*c, command.Name) {
+	if CmdExists(c, command.Name) {
 		return fmt.Errorf("Command already exists\n")
 	}
 
@@ -134,9 +144,11 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 		return fmt.Errorf("Core is not properly initialized\n")
 	}
 
-	if CmdExists(*c, commandName) {
+	if CmdExists(c, commandName) {
 		return fmt.Errorf("Command already exists\n")
 	}
+
+	fmt.Println("Got past CMDExists...")
 
 	currentConfig, err := getCurrentConfig()
 	if err != nil {
