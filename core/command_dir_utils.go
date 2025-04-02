@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/eefenn/eefenn-cli/cmd"
 )
 
 // getSubcommandShellFileAbsPath
@@ -33,4 +34,8 @@ func getCMDDependenciesDir(commandName string) string {
 	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, commandName, commandName)
 
 	return commandDependenciesDirectory
+}
+
+func changeCommandDirectory(command cmd.Command) {
+
 }
