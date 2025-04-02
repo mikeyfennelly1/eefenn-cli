@@ -27,7 +27,7 @@ func TestUnMarshalCommandFromYamlContents_NameScriptDescriptionArgs(t *testing.T
 		Description: "This is a test command.",
 		Needs:       []string{"./file1", "./file2"},
 		Args: []Arg{
-			Arg{
+			{
 				Name:        "arg1",
 				Type:        "string",
 				Description: "A test argument",
@@ -46,7 +46,7 @@ func TestValidateCMDSyntax(t *testing.T) {
 		Description: "This is a test command.",
 		Needs:       []string{"./file1", "./file2"},
 		Args: []Arg{
-			Arg{
+			{
 				Name:        "arg1",
 				Type:        "string",
 				Description: "A test argument",
@@ -64,7 +64,7 @@ func TestValidateCMDSyntax(t *testing.T) {
 		Description: "This is a test command.",
 		Needs:       []string{"./file1", "./file2"},
 		Args: []Arg{
-			Arg{
+			{
 				Name:        "arg1",
 				Type:        "string",
 				Description: "A test argument",
@@ -82,7 +82,7 @@ func TestValidateCMDSyntax(t *testing.T) {
 		Description: "",
 		Needs:       []string{"./file1", "./file2"},
 		Args: []Arg{
-			Arg{
+			{
 				Name:        "arg1",
 				Type:        "string",
 				Description: "A test argument",
@@ -100,7 +100,7 @@ func TestValidateCMDSyntax(t *testing.T) {
 		Description: "description",
 		Needs:       []string{"./file1", "./file2"},
 		Args: []Arg{
-			Arg{
+			{
 				Name:        "arg1",
 				Type:        "invalid",
 				Description: "A test argument",
@@ -118,7 +118,7 @@ func TestValidateCMDSyntax(t *testing.T) {
 		Description: "description",
 		Needs:       []string{"./file1", "./file2"},
 		Args: []Arg{
-			Arg{
+			{
 				Name:        "",
 				Type:        "string",
 				Description: "A test argument",
@@ -136,7 +136,7 @@ func TestValidateCMDSyntax(t *testing.T) {
 		Description: "description",
 		Needs:       []string{"./file1", "./file2"},
 		Args: []Arg{
-			Arg{
+			{
 				Name:        "name",
 				Type:        "string",
 				Description: "",

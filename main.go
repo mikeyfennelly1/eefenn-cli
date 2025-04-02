@@ -44,9 +44,27 @@ var rmCommand = &cobra.Command{
 	},
 }
 
+// command for committing an edited script to a command
+var editCommand = &cobra.Command{
+	Use:   "edit",
+	Short: "Copy a file's configuration and dependencies to the pwd for editing.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := cli.Edit(commandName)
+		if err != nil {
+			fmt.Printf("Error executing edit command: %v\n", err)
+		}
+	},
+}
+
 func init() {
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
 	err := rmCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+
+	editCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
+	err = editCommand.MarkFlagRequired("name")
 	if err != nil {
 		return
 	}
@@ -62,6 +80,8 @@ func main() {
 	rootCmd.AddCommand(commitCommand)
 
 	rootCmd.AddCommand(rmCommand)
+
+	rootCmd.AddCommand(editCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

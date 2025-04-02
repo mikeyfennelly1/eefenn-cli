@@ -9,6 +9,9 @@ package core
 import (
 	"fmt"
 	cmd "github.com/eefenn/eefenn-cli/cmd"
+	"io"
+	"os"
+	"path/filepath"
 )
 
 func GetCore() (CoreInterface, error) {
@@ -49,10 +52,11 @@ type CoreInterface interface {
 	// Remove a command, specifying which command by name of the command.
 	RemoveCommandByName(commandName string) error
 
-	// EditCommand
+	// RecursivelyCopyCommandDirToPWD
 	//
-	// Edit a command, specifying which command by name of the command.
-	EditCommand(commandName string)
+	// Copy all contents of a command directory and all
+	// subdirectories to the pwd.
+	RecursivelyCopyCommandDirToPWD(commandName string) error
 
 	// RunCommand
 	//
@@ -85,14 +89,68 @@ func (c *Core) GetALlCommands() ([]cmd.Command, error) {
 	return c.config.Commands, nil
 }
 
-func (c *Core) EditCommand(commandName string) {
-	//TODO implement me
-	panic("implement me")
+func (c *Core) RecursivelyCopyCommandDirToPWD(commandName string) error {
+	src := fmt.Sprintf(EefennCLIRoot + "/" + commandName)
+	dst, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	return filepath.WalkDir(src, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Get the relative path from the source directory
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+
+		targetPath := filepath.Join(dst, relPath)
+
+		// If it's a directory, create it
+		if d.IsDir() {
+			return os.MkdirAll(targetPath, os.ModePerm)
+		}
+
+		// If it's a file, copy it
+		return copyFile(path, targetPath)
+	})
+}
+
+// CopyFile copies a single file from src to dst
+func copyFile(src string, dst string) error {
+	// Open the source file
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	// Create the destination file
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	// Copy contents from source to destination
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		return err
+	}
+
+	// Ensure file permissions are copied
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, srcInfo.Mode())
 }
 
 func (c *Core) RunCommand(commandName string) {
-	//TODO implement me
-	panic("implement me")
+	panic("Implement me")
 }
 
 // Commit
@@ -170,9 +228,5 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 		return err
 	}
 
-	return nil
-}
-
-func (c *Core) GetCommands() []cmd.Command {
 	return nil
 }
