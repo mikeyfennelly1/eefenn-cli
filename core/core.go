@@ -11,7 +11,7 @@ import (
 	cmd "github.com/eefenn/eefenn-cli/cmd"
 )
 
-func GetCore() (*Core, error) {
+func GetCore() (CoreInterface, error) {
 	config, err := getCurrentConfig()
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ type CoreInterface interface {
 	// Commit
 	//
 	// Add/'commit' a command to core.
-	Commit(command cmd.Command)
+	Commit(command cmd.Command) error
 
 	// GetCommandByName
 	//
@@ -65,6 +65,26 @@ type Core struct {
 	directoryTree eefennCLIDirectoryTree
 }
 
+func (c *Core) GetCommandByName(commandName string) (cmd.Command, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *Core) GetALlCommands() []cmd.Command {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *Core) EditCommand(commandName string) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *Core) RunCommand(commandName string) {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Commit
 //
 // Add/'commit' a command to core.
@@ -73,7 +93,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return fmt.Errorf("Core is not properly initialized\n")
 	}
 
-	if cmdExists(*c, command.Name) {
+	if CmdExists(*c, command.Name) {
 		return fmt.Errorf("Command already exists\n")
 	}
 
@@ -114,7 +134,7 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 		return fmt.Errorf("Core is not properly initialized\n")
 	}
 
-	if cmdExists(*c, commandName) {
+	if CmdExists(*c, commandName) {
 		return fmt.Errorf("Command already exists\n")
 	}
 

@@ -7,7 +7,7 @@ import (
 )
 
 func TestCMDExists(t *testing.T) {
-	exists := cmdExists("test-command")
+	exists := CmdExists("test-command")
 	assert.False(t, exists)
 	fmt.Printf("%v\n", exists)
 }

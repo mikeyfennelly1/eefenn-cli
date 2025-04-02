@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"github.com/eefenn/eefenn-cli/core"
 )
 
@@ -9,10 +8,6 @@ import (
 //
 // Remove a command by name
 func RM(commandName string) error {
-	if !core.cmdExists(commandName) {
-		return fmt.Errorf("Command '%s' does not exist.", commandName)
-	}
-
 	currentCore, err := core.GetCore()
 	if err != nil {
 		return err

@@ -124,7 +124,7 @@ func (edt *eefennCLIDirectoryTree) CopyScriptToCMDDir(cmd cmd_config.Command) er
 	return destinationFile.Sync() // Ensure all writes are flushed to disk
 }
 
-// CopyScriptToCMDDir
+// CopyDependenciesToDependenciesDir
 //
 // Move a shell script to its command's directory
 func (edt *eefennCLIDirectoryTree) CopyDependenciesToDependenciesDir(cmd cmd_config.Command) error {
