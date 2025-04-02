@@ -68,7 +68,7 @@ var describeCommand = &cobra.Command{
 	},
 }
 
-// command for describing a command
+// command for listing all commands
 var lsCommand = &cobra.Command{
 	Use:   "ls",
 	Short: "List all commands in eefenn-cli.",

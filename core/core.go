@@ -8,7 +8,7 @@ package core
 
 import (
 	"fmt"
-	cmd "github.com/eefenn/eefenn-cli/cmd"
+	"github.com/eefenn/eefenn-cli/cmd"
 	"io"
 	"os"
 	"os/exec"
@@ -91,8 +91,15 @@ func (c *Core) GetALlCommands() ([]cmd.Command, error) {
 }
 
 func (c *Core) RecursivelyCopyCommandDirToPWD(commandName string) error {
-	src := fmt.Sprintf(EefennCLIRoot + "/" + commandName)
-	dst, err := os.Getwd()
+	src := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, commandName, commandName)
+	pwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	script := fmt.Sprintf("%s/%s/%s.sh", EefennCLIRoot, commandName, commandName)
+	scriptDst := fmt.Sprintf("%s/%s.sh", pwd, commandName)
+	err = copyFile(script, scriptDst)
 	if err != nil {
 		return err
 	}
@@ -108,7 +115,7 @@ func (c *Core) RecursivelyCopyCommandDirToPWD(commandName string) error {
 			return err
 		}
 
-		targetPath := filepath.Join(dst, relPath)
+		targetPath := filepath.Join(pwd, relPath)
 
 		// If it's a directory, create it
 		if d.IsDir() {
