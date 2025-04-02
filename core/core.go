@@ -59,10 +59,10 @@ type CoreInterface interface {
 	// subdirectories to the pwd.
 	RecursivelyCopyCommandDirToPWD(commandName string) error
 
-	// RunCommand
+	// RunCommandScriptInPWD
 	//
 	// Run a command, specifying which command by name of the command.
-	RunCommandScriptInPWD(commandName string)
+	RunCommandScriptInPWD(command cmd.Command) error
 }
 
 type Core struct {

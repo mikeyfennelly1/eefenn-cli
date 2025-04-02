@@ -32,7 +32,7 @@ var commitCommand = &cobra.Command{
 	},
 }
 
-// command for committing an edited script to a command
+// command for removing an eefenn-cli command
 var rmCommand = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove a command by name.",
@@ -44,7 +44,7 @@ var rmCommand = &cobra.Command{
 	},
 }
 
-// command for committing an edited script to a command
+// command for moving a command script and it's dependencies to pwd
 var editCommand = &cobra.Command{
 	Use:   "edit",
 	Short: "Copy a file's configuration and dependencies to the pwd for editing.",
@@ -52,6 +52,18 @@ var editCommand = &cobra.Command{
 		err := cli.Edit(commandName)
 		if err != nil {
 			fmt.Printf("Error executing edit command: %v\n", err)
+		}
+	},
+}
+
+// command for describing a command
+var describeCommand = &cobra.Command{
+	Use:   "describe",
+	Short: "Print the description of a command and it's arguments to the console.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := cli.Describe(commandName)
+		if err != nil {
+			fmt.Printf("Error describing command: %v\n", err)
 		}
 	},
 }
@@ -68,6 +80,13 @@ func init() {
 	if err != nil {
 		return
 	}
+
+	describeCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
+	err = describeCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
+
 }
 
 func main() {
@@ -82,6 +101,8 @@ func main() {
 	rootCmd.AddCommand(rmCommand)
 
 	rootCmd.AddCommand(editCommand)
+
+	rootCmd.AddCommand(describeCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
