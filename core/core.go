@@ -1,6 +1,6 @@
 // core.go
 //
-// Core is essentially the management system for commands, and their files.
+// core is essentially the management system for commands, and their files.
 //
 // Author: Mikey Fennelly
 
@@ -23,9 +23,9 @@ func GetCore() (CoreInterface, error) {
 
 	var edt cmdFilesController
 
-	current_core := Core{
+	current_core := core{
 		config:        config,
-		directoryTree: edt,
+		cmdController: edt,
 	}
 
 	return &current_core, nil
@@ -35,42 +35,36 @@ type CoreInterface interface {
 	// Commit
 	//
 	// Add/'commit' a command to core.
-	Commit(command cmd.Command) error
+	Commit(command cmd.CommandInterface) error
 
 	// GetCommandByName
 	//
-	// Get a Command object for a command, using the name of the command as
+	// Get a command object for a command, using the name of the command as
 	// a parameter.
-	GetCommandByName(commandName string) (*cmd.Command, error)
+	GetCommandByName(commandName string) (*cmd.CommandInterface, error)
 
 	// GetALlCommands
 	//
 	// Get all commands in the current core state.
-	GetALlCommands() ([]cmd.Command, error)
+	GetALlCommands() ([]cmd.CommandInterface, error)
 
 	// RemoveCommandByName
 	//
 	// Remove a command, specifying which command by name of the command.
 	RemoveCommandByName(commandName string) error
 
-	// RecursivelyCopyCommandDirToPWD
+	// CreateRunnableCommandInstance
 	//
-	// Copy all contents of a command directory and all
-	// subdirectories to the pwd.
-	RecursivelyCopyCommandDirToPWD(commandName string) error
-
-	// RunCommandInPWD
-	//
-	// Run a command, specifying which command by name of the command.
-	RunCommandInPWD(command cmd.Command) error
+	// Create a command from a command image.
+	CreateRunnableCommandInstance(targetDirectory absolutePath, imageInterface commandImageInterface) RunnableCommandInterface
 }
 
-type Core struct {
+type core struct {
 	config        config
-	directoryTree cmdFilesController
+	cmdController cmdFilesController
 }
 
-func (c *Core) GetCommandByName(commandName string) (*cmd.Command, error) {
+func (c *core) GetCommandByName(commandName string) (*cmd.CommandInterface, error) {
 	for _, command := range c.config.Commands {
 		if command.Name == commandName {
 			return &command, nil
@@ -83,14 +77,14 @@ func (c *Core) GetCommandByName(commandName string) (*cmd.Command, error) {
 // GetALlCommands
 // Gets all commands in config. If there are no commands,
 // will return an error
-func (c *Core) GetALlCommands() ([]cmd.Command, error) {
+func (c *core) GetALlCommands() ([]cmd.CommandInterface, error) {
 	if len(c.config.Commands) == 0 {
 		return nil, fmt.Errorf("there are no commands")
 	}
 	return c.config.Commands, nil
 }
 
-func (c *Core) RecursivelyCopyCommandDirToPWD(commandName string) error {
+func (c *core) RecursivelyCopyCommandDirToPWD(commandName string) error {
 	src := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, commandName, commandName)
 	pwd, err := os.Getwd()
 	if err != nil {
@@ -158,7 +152,7 @@ func copyFile(src string, dst string) error {
 }
 
 // If the script for the command is in the pwd
-func (c *Core) RunCommandInPWD(command cmd.Command) error {
+func (c *core) RunCommandInPWD(command cmd.CommandInterface) error {
 	pwd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -183,41 +177,32 @@ func (c *Core) RunCommandInPWD(command cmd.Command) error {
 // Commit
 //
 // Add/'commit' a command to core.
-func (c *Core) Commit(command cmd.Command) error {
-	if c == nil {
-		return fmt.Errorf("Core is not properly initialized\n")
-	}
-
-	pCMD, err := c.GetCommandByName(command.Name)
-	if pCMD != nil {
-		return fmt.Errorf("command '%s' already exists\n\nUse the 'ef rm' command to remove this command, or 'ef edit' to edit the command.", command.Name)
-	}
-
+func Commit(command commandImageInterface) error {
 	var edt cmdFilesController
 
 	// Add the command to the config file
-	err = c.config.addCMD(command)
+	err := c.config.addCMD(command)
 	if err != nil {
 		return err
 	}
 	// Create the directory tree for the command
-	err = c.directoryTree.createCMDDir(command)
+	err = createCMDImageDir(command)
 	if err != nil {
 		return err
 	}
 	// Copy the script for the command from the pwd to the script
 	// in newly created directory tree.
-	err = c.directoryTree.CopyScriptToCMDDir(command)
+	err = c.cmdController.CopyCommand(command)
 	if err != nil {
 		return err
 	}
 
-	err = c.directoryTree.CopyDependenciesToDependenciesDir(command)
+	err = c.cmdController.CopyDependenciesToDependenciesDir(command)
 	if err != nil {
 		return err
 	}
 
-	err = edt.createCMDDir(command)
+	err = edt.createCMDImageDir(command)
 	if err != nil {
 		return err
 	}
@@ -225,9 +210,9 @@ func (c *Core) Commit(command cmd.Command) error {
 	return nil
 }
 
-func (c *Core) RemoveCommandByName(commandName string) error {
+func (c *core) RemoveCommandByName(commandName string) error {
 	if c == nil {
-		return fmt.Errorf("Core is not properly initialized\n")
+		return fmt.Errorf("core is not properly initialized\n")
 	}
 
 	pCMD, err := c.GetCommandByName(commandName)
@@ -250,7 +235,7 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 
 	var edt cmdFilesController
 
-	err = edt.RemoveCommandRecursively(commandName)
+	err = edt.RemoveImageDirectoryRecursively(commandName)
 	if err != nil {
 		return err
 	}

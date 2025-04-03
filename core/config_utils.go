@@ -1,4 +1,4 @@
-package cmd
+package core
 
 import (
 	"fmt"
@@ -15,20 +15,20 @@ const configYamlPath = "./config.yaml"
 // in the file.
 //
 // Returns the appropriate error operation if this fails.
-func GetCMDFromPWD() (*Command, error) {
+func GetCMDFromPWD() (*CommandInterface, error) {
 	// ensure that the config.yaml exists in the pwd
 	yamlContents, err := os.ReadFile(configYamlPath)
 	if err != nil {
 		return nil, err
 	}
 
-	// unmarshal a command from the config.yaml
+	// unmarshal a CommandImage from the config.yaml
 	pCMD, err := unMarshalCommandFromYamlContents(yamlContents)
 	if err != nil {
 		return nil, err
 	}
 
-	// validate the syntax of the command
+	// validate the syntax of the CommandImage
 	err = validateCMDSyntax(pCMD)
 	if err != nil {
 		return nil, err
@@ -41,8 +41,8 @@ func GetCMDFromPWD() (*Command, error) {
 	return pCMD, nil
 }
 
-// Returns an error if the directory tree is not valid for the command.
-func validateDirectoryTreeWithCMD(cmd *Command) error {
+// Returns an error if the directory tree is not valid for the CommandImage.
+func validateDirectoryTreeWithCMD(cmd *CommandInterface) error {
 	// ensure script is findable at specified
 	// position relative to script
 	_, err := os.Stat(cmd.Script)
@@ -61,8 +61,8 @@ func validateDirectoryTreeWithCMD(cmd *Command) error {
 	return nil
 }
 
-func unMarshalCommandFromYamlContents(yamlConfigContents []byte) (*Command, error) {
-	var cmd Command
+func unMarshalCommandFromYamlContents(yamlConfigContents []byte) (*CommandInterface, error) {
+	var cmd CommandInterface
 	err := yaml.Unmarshal(yamlConfigContents, &cmd)
 	if err != nil {
 		fmt.Println("Error parsing YAML:", err)
@@ -73,16 +73,16 @@ func unMarshalCommandFromYamlContents(yamlConfigContents []byte) (*Command, erro
 }
 
 // Returns an error if syntax of passed
-// command parsed from the config is invalid.
-func validateCMDSyntax(cmd *Command) error {
-	// check for empty string as command name
+// CommandImage parsed from the config is invalid.
+func validateCMDSyntax(cmd *CommandInterface) error {
+	// check for empty string as CommandImage name
 	if !(len(cmd.Name) > 0) {
-		return fmt.Errorf("invalid command name")
+		return fmt.Errorf("invalid CommandImage name")
 	}
 
-	// check for empty command description
+	// check for empty CommandImage description
 	if !(len(cmd.Description) > 0) {
-		return fmt.Errorf("invalid command description")
+		return fmt.Errorf("invalid CommandImage description")
 	}
 
 	if cmd.Args != nil {

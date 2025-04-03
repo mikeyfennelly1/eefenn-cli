@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/cmd"
 	"github.com/eefenn/eefenn-cli/core"
 )
 
@@ -10,7 +9,7 @@ import (
 //
 // Add a command by .yaml configuration file
 func Commit() error {
-	pCMD, err := cmd.GetCMDFromPWD()
+	pCMD, err := core.GetCMDFromPWD()
 	if err != nil {
 		return err
 	}

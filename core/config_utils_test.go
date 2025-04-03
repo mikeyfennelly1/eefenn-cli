@@ -1,4 +1,4 @@
-package cmd
+package core
 
 import (
 	"fmt"
@@ -8,11 +8,11 @@ import (
 )
 
 func TestUnMarshalCommandFromYamlContents_NameScriptDescription(t *testing.T) {
-	input := "name: test-command\nscript: test-eefenn.sh\ndescription: This is a test command."
-	expected := &Command{
-		Name:        "test-command",
+	input := "name: test-CommandImage\nscript: test-eefenn.sh\ndescription: This is a test CommandImage."
+	expected := &CommandInterface{
+		Name:        "test-CommandImage",
 		Script:      "test-eefenn.sh",
-		Description: "This is a test command.",
+		Description: "This is a test CommandImage.",
 	}
 	actual, _ := unMarshalCommandFromYamlContents([]byte(input))
 
@@ -20,11 +20,11 @@ func TestUnMarshalCommandFromYamlContents_NameScriptDescription(t *testing.T) {
 }
 
 func TestUnMarshalCommandFromYamlContents_NameScriptDescriptionArgs(t *testing.T) {
-	input := "name: test-command\nscript: test-eefenn.sh\ndescription: This is a test command.\nneeds:\n  - ./file1\n  - ./file2\nargs:\n  - name: arg1\n    type: string\n    description: A test argument"
-	expected := &Command{
-		Name:         "test-command",
+	input := "name: test-CommandImage\nscript: test-eefenn.sh\ndescription: This is a test CommandImage.\nneeds:\n  - ./file1\n  - ./file2\nargs:\n  - name: arg1\n    type: string\n    description: A test argument"
+	expected := &CommandInterface{
+		Name:         "test-CommandImage",
 		Script:       "test-eefenn.sh",
-		Description:  "This is a test command.",
+		Description:  "This is a test CommandImage.",
 		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
@@ -40,10 +40,10 @@ func TestUnMarshalCommandFromYamlContents_NameScriptDescriptionArgs(t *testing.T
 }
 
 func TestValidateCMDSyntax(t *testing.T) {
-	validCMD := &Command{
-		Name:         "test-command",
+	validCMD := &CommandInterface{
+		Name:         "test-CommandImage",
 		Script:       "test-eefenn.sh",
-		Description:  "This is a test command.",
+		Description:  "This is a test CommandImage.",
 		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
@@ -57,11 +57,11 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	require.NoError(t, actual)
 
-	// test a command where there is no name
-	noNameCMD := &Command{
+	// test a CommandImage where there is no name
+	noNameCMD := &CommandInterface{
 		Name:         "",
 		Script:       "test-eefenn.sh",
-		Description:  "This is a test command.",
+		Description:  "This is a test CommandImage.",
 		Dependencies: []string{"./file1", "./file2"},
 		Args: []Arg{
 			{
@@ -75,8 +75,8 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	require.Error(t, actual)
 
-	// test a command where the description is empty string
-	noDescriptionCMD := &Command{
+	// test a CommandImage where the description is empty string
+	noDescriptionCMD := &CommandInterface{
 		Name:         "test-cmd",
 		Script:       "test-eefenn.sh",
 		Description:  "",
@@ -93,8 +93,8 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	require.Error(t, actual)
 
-	// test a command where the arg type is invalid
-	invalidArgCMD := &Command{
+	// test a CommandImage where the arg type is invalid
+	invalidArgCMD := &CommandInterface{
 		Name:         "test-cmd",
 		Script:       "test-eefenn.sh",
 		Description:  "description",
@@ -111,8 +111,8 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	require.Error(t, actual)
 
-	// test a command where the arg type is invalid
-	emptyArgNameCMD := &Command{
+	// test a CommandImage where the arg type is invalid
+	emptyArgNameCMD := &CommandInterface{
 		Name:         "test-cmd",
 		Script:       "test-eefenn.sh",
 		Description:  "description",
@@ -129,8 +129,8 @@ func TestValidateCMDSyntax(t *testing.T) {
 
 	require.Error(t, actual)
 
-	// test a command where the arg type is invalid
-	emptyArgDescriptionCMD := &Command{
+	// test a CommandImage where the arg type is invalid
+	emptyArgDescriptionCMD := &CommandInterface{
 		Name:         "test-cmd",
 		Script:       "test-eefenn.sh",
 		Description:  "description",

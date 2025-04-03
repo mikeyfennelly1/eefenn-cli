@@ -14,22 +14,22 @@ type ConfigInterface interface {
 	//
 	// Get a that exists in the config file command by the name of the command.
 	//
-	// Returns the index of the command, the Command struct for
+	// Returns the index of the command, the command struct for
 	// the command, and error status.
-	getCommandByName(name string) (*int, *cmd.Command, error)
+	getCommandByName(name string) (*int, *cmd.CommandInterface, error)
 
 	// AddCommand
 	//
 	// update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 	// marshalled subcommand data.
-	addCMD(subcommand cmd.Command) error
+	addCMD(subcommand cmd.CommandInterface) error
 
 	// GetCommandArgs
 	//
 	// Get the arguments to a command by commandName.
 	//
 	// Returns command's arguments and error status.
-	getCommandArgs(commandName string) ([]cmd.Arg, error)
+	getCommandArgs(commandName string) ([]Arg, error)
 
 	// RemoveCommandByName
 	//
@@ -38,8 +38,8 @@ type ConfigInterface interface {
 }
 
 type config struct {
-	RemoteRepoURL string        `json:"remoteRepoURL"`
-	Commands      []cmd.Command `json:"commands"`
+	RemoteRepoURL string                 `json:"remoteRepoURL"`
+	Commands      []cmd.CommandInterface `json:"commands"`
 }
 
 // GetCommandArgs
@@ -47,7 +47,7 @@ type config struct {
 // Get the arguments to a command by commandName.
 //
 // Returns command's arguments and error status.
-func (c *config) getCommandArgs(commandName string) ([]cmd.Arg, error) {
+func (c *config) getCommandArgs(commandName string) ([]Arg, error) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -81,10 +81,10 @@ func getCurrentConfig() (config, error) {
 //
 // Get a that exists in the config file command by the name of the command.
 //
-// Returns the index of the command, the Command struct for
+// Returns the index of the command, the command struct for
 // the command, and error status.
-func (c *config) getCommandByName(name string) (*int, *cmd.Command, error) {
-	var p_cmd *cmd.Command
+func (c *config) getCommandByName(name string) (*int, *cmd.CommandInterface, error) {
+	var p_cmd *cmd.CommandInterface
 	var p_commandIndex *int
 
 	// find the index of the item whose Name matches the parameter 'name'
@@ -128,7 +128,7 @@ func (c *config) update() error {
 //
 // update /usr/lib/eefenn-cli/eefenn-cli.config.json with
 // marshalled subcommand data.
-func (c *config) addCMD(cmd cmd.Command) error {
+func (c *config) addCMD(cmd cmd.CommandInterface) error {
 	c.Commands = append(c.Commands, cmd)
 	err := c.update()
 	if err != nil {

@@ -12,7 +12,7 @@ func Edit(commandName string) error {
 		return err
 	}
 
-	err = currentCore.RecursivelyCopyCommandDirToPWD(commandName)
+	err = currentCore.CreateRunnableCommandInstance(commandName)
 	if err != nil {
 		return err
 	}

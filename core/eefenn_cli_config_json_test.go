@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var testCMD = cmd.Command{
+var testCMD = cmd.CommandInterface{
 	Name:         "test",
 	Script:       "test.sh",
 	Dependencies: nil,
