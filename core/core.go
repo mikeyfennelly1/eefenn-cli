@@ -21,7 +21,7 @@ func GetCore() (CoreInterface, error) {
 		return nil, err
 	}
 
-	var edt eefennCLIDirectoryTree
+	var edt cmdFilesController
 
 	current_core := Core{
 		config:        config,
@@ -67,7 +67,7 @@ type CoreInterface interface {
 
 type Core struct {
 	config        config
-	directoryTree eefennCLIDirectoryTree
+	directoryTree cmdFilesController
 }
 
 func (c *Core) GetCommandByName(commandName string) (*cmd.Command, error) {
@@ -193,7 +193,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return fmt.Errorf("command '%s' already exists\n\nUse the 'ef rm' command to remove this command, or 'ef edit' to edit the command.", command.Name)
 	}
 
-	var edt eefennCLIDirectoryTree
+	var edt cmdFilesController
 
 	// Add the command to the config file
 	err = c.config.addCMD(command)
@@ -201,7 +201,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return err
 	}
 	// Create the directory tree for the command
-	err = c.directoryTree.CreateCMDDir(command)
+	err = c.directoryTree.createCMDDir(command)
 	if err != nil {
 		return err
 	}
@@ -217,7 +217,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return err
 	}
 
-	err = edt.CreateCMDDir(command)
+	err = edt.createCMDDir(command)
 	if err != nil {
 		return err
 	}
@@ -248,9 +248,9 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 		return err
 	}
 
-	var edt eefennCLIDirectoryTree
+	var edt cmdFilesController
 
-	err = edt.RemoveCommandDirectoryRecursively(commandName)
+	err = edt.RemoveCommandRecursively(commandName)
 	if err != nil {
 		return err
 	}
