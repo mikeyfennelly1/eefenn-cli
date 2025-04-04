@@ -257,3 +257,37 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 
 	return nil
 }
+
+func PrintSourceFiles(cmdName string) error {
+	paths, err := getCommandFiles(cmdName)
+
+	if err != nil {
+		return err
+	}
+
+	for _, file := range paths {
+		fmt.Println(file)
+	}
+
+	return nil
+}
+
+func getCommandFiles(commandName string) ([]string, error) {
+	var filepaths []string
+
+	err := filepath.WalkDir(EefennCLIRoot+"/"+commandName, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			filepaths = append(filepaths, path)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return filepaths, nil
+}
