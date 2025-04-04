@@ -80,6 +80,18 @@ var lsCommand = &cobra.Command{
 	},
 }
 
+// command for listing all commands
+var treeCommand = &cobra.Command{
+	Use:   "tree",
+	Short: "Print the directory tree for the command image.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := cli.Tree(commandName)
+		if err != nil {
+			fmt.Printf("Error printing the directory tree for the command image: %v\n", err)
+		}
+	},
+}
+
 func init() {
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
 	err := rmCommand.MarkFlagRequired("name")
@@ -99,6 +111,11 @@ func init() {
 		return
 	}
 
+	treeCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
+	err = treeCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
 }
 
 func main() {
@@ -117,6 +134,8 @@ func main() {
 	rootCmd.AddCommand(describeCommand)
 
 	rootCmd.AddCommand(lsCommand)
+
+	rootCmd.AddCommand(treeCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
