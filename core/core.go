@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 func GetCore() (CoreInterface, error) {
@@ -258,18 +259,29 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 	return nil
 }
 
-func PrintSourceFiles(cmdName string) error {
+func CreateCMDFilesRunFilesMap(cmdName string, runDir string) error {
+	runDirCleaned := strings.TrimRight(runDir, "/")
+
 	paths, err := getCommandFiles(cmdName)
 
 	if err != nil {
 		return err
 	}
 
+	cmdFilesRunFilesMap := make(map[string]string)
+	basePath := EefennCLIRoot + "/" + cmdName
+
 	for _, file := range paths {
-		fmt.Println(file)
+		relPath := strings.Replace(file, basePath, "", 1)
+		cmdFilesRunFilesMap[file] = prependPath(runDirCleaned, strings.TrimPrefix(relPath, "/"))
+		fmt.Printf("%s:%s\n", file, cmdFilesRunFilesMap[file])
 	}
 
 	return nil
+}
+
+func prependPath(pathToPrepend string, pathToPrependTo string) string {
+	return pathToPrepend + "/" + pathToPrependTo
 }
 
 func getCommandFiles(commandName string) ([]string, error) {

@@ -6,6 +6,6 @@ import (
 )
 
 func TestCore_PrintSourceFiles(t *testing.T) {
-	err := PrintSourceFiles("cool-command")
+	err := CreateCMDFilesRunFilesMap("cool-command", "/some/dir")
 	require.NoError(t, err)
 }
