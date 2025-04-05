@@ -49,9 +49,9 @@ func (edt *eefennCLIDirectoryTree) CreateCMDDirTree(cmd cmd_config.Command) erro
 		return fmt.Errorf("You must have root permissions to perform changes to CLI core\n")
 	}
 	// create the directory that contains dependencies and script for the command
-	subCommandDependenciesDir := getCMDDependenciesDir(cmd.Name)
+	cmdImageDir := getAbsImgDirPath(cmd.Name)
 
-	err := os.MkdirAll(subCommandDependenciesDir, 0755)
+	err := os.MkdirAll(cmdImageDir, 0755)
 	if err != nil {
 		return fmt.Errorf("Could not create directory for this Subcommand: %v\n", err)
 	}
@@ -90,7 +90,7 @@ func (edt *eefennCLIDirectoryTree) createEmptyShellScriptForCMD(cmd cmd_config.C
 //
 // remove a command directory recursively by command hash
 func (edt *eefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName string) error {
-	dirname := getAbsoluteSubcommandDirname(commandName)
+	dirname := getAbsImgDirPath(commandName)
 
 	err := os.RemoveAll(dirname)
 	if err != nil {

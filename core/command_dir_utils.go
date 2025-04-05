@@ -15,12 +15,12 @@ func getSubcommandShellFileAbsPath(commandName string) string {
 	return fileName
 }
 
-// getAbsoluteSubcommandDirname
+// getAbsImgDirPath
 //
 // get the absolute directory path for the Subcommand directory.
-func getAbsoluteSubcommandDirname(commandName string) string {
+func getAbsImgDirPath(commandName string) string {
 	// create the string for the command ID
-	commandDirectory := fmt.Sprintf("%s/%s", EefennCLIRoot, commandName)
+	imgDir := fmt.Sprintf("%s/%s", EefennCLIRoot, commandName)
 
-	return commandDirectory
+	return imgDir
 }
