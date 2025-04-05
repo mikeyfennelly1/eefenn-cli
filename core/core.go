@@ -259,7 +259,7 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 	return nil
 }
 
-func CreateCMDFilesRunFilesMap(cmdName string, runDir string) error {
+func Run(cmdName string, runDir string) error {
 	runDirCleaned := strings.TrimRight(runDir, "/")
 
 	paths, err := getCommandFiles(cmdName)
