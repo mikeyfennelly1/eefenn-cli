@@ -24,13 +24,3 @@ func getAbsoluteSubcommandDirname(commandName string) string {
 
 	return commandDirectory
 }
-
-// getCMDDependenciesDir
-//
-// Get the file path to /usr/lib/eefenn-cli/<command-hash>/<command-hash>.dependencies
-func getCMDDependenciesDir(commandName string) string {
-	// create the string for the command ID
-	commandDependenciesDirectory := fmt.Sprintf("%s/%s/%s.dependencies", EefennCLIRoot, commandName, commandName)
-
-	return commandDependenciesDirectory
-}
