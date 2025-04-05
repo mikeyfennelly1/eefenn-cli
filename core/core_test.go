@@ -7,7 +7,7 @@ import (
 )
 
 func TestCore_PrintSourceFiles(t *testing.T) {
-	_, err := GetImgFilesToRunFilesMap("cool-command", "/some/dir")
+	_, err := getImgFilesToRunFilesMap("cool-command", "/some/dir")
 	require.NoError(t, err)
 }
 

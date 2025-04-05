@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/eefenn/eefenn-cli/core"
+	"os"
 )
+
+const EefennCLIRoot = "/usr/lib/eefenn-cli"
 
 type Command struct {
 	// alias of the script
@@ -39,6 +41,21 @@ func (c *Command) GetCmdFilePaths() []string {
 	return filePaths
 }
 
-func (c *Command) GetCmdDir() string {
-	return fmt.Sprintf("%s/%s", core.EefennCLIRoot, c.Name)
+func (c *Command) GetCmdImgDirPath() string {
+	return fmt.Sprintf("%s/%s", EefennCLIRoot, c.Name)
+}
+
+func (c *Command) GetCommandScriptPathInRunDir(runDir string) string {
+	return runDir + c.Script
+}
+
+func (c *Command) CreateCommandImageDir() error {
+	imgDir := c.GetCmdImgDirPath()
+
+	err := os.MkdirAll(imgDir, 0775)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -8,12 +8,7 @@ import (
 )
 
 func LS() error {
-	c, err := core.GetCore()
-	if err != nil {
-		return err
-	}
-
-	allCommands, err := c.GetALlCommands()
+	allCommands, err := core.GetAllCommands()
 	if err != nil {
 		return err
 	}

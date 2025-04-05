@@ -6,12 +6,7 @@ import (
 )
 
 func Describe(commandName string) error {
-	c, err := core.GetCore()
-	if err != nil {
-		return err
-	}
-
-	command, err := c.GetCommandByName(commandName)
+	_, command, err := core.GetCommandByName(commandName)
 	if err != nil {
 		return err
 	}
