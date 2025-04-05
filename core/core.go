@@ -62,7 +62,7 @@ type CoreInterface interface {
 
 	// RunCommandScriptInPWD
 	//
-	// Run a command, specifying which command by name of the command.
+	// GetImgFilesToRunFilesMap a command, specifying which command by name of the command.
 	RunCommandScriptInPWD(command cmd.Command) error
 }
 
@@ -126,36 +126,6 @@ func (c *Core) RecursivelyCopyCommandDirToPWD(commandName string) error {
 		// If it's a file, copy it
 		return copyFile(path, targetPath)
 	})
-}
-
-// CopyFile copies a single file from src to dst
-func copyFile(src string, dst string) error {
-	// Open the source file
-	srcFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer srcFile.Close()
-
-	// Create the destination file
-	dstFile, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer dstFile.Close()
-
-	// Copy contents from source to destination
-	_, err = io.Copy(dstFile, srcFile)
-	if err != nil {
-		return err
-	}
-
-	// Ensure file permissions are copied
-	srcInfo, err := os.Stat(src)
-	if err != nil {
-		return err
-	}
-	return os.Chmod(dst, srcInfo.Mode())
 }
 
 // If the script for the command is in the pwd
@@ -260,24 +230,116 @@ func (c *Core) RemoveCommandByName(commandName string) error {
 }
 
 func Run(cmdName string, runDir string) error {
-	runDirCleaned := strings.TrimRight(runDir, "/")
-
-	paths, err := getCommandFiles(cmdName)
-
+	// get the map of absolute paths from image directory
+	// file to the run directory file (<image_dir/file_x>:<run_dir/file_x>)
+	imgFilesRunFilesMap, err := GetImgFilesToRunFilesMap(cmdName, runDir)
 	if err != nil {
 		return err
 	}
 
-	cmdFilesRunFilesMap := make(map[string]string)
-	basePath := EefennCLIRoot + "/" + cmdName
+	// initialize a slice of absolute paths to keep track
+	// of the files we have copied from image directory for
+	// cleaning up
+	var runFiles []string
+	// copy all files in the image to the run directory
+	for source, destination := range imgFilesRunFilesMap {
+		err := copyFile(source, destination)
+		runFiles = append(runFiles, destination)
+		if err != nil {
+			return err
+		}
+	}
+	// remove files after script is executed
+	defer func() {
+		cleanupFiles(runFiles)
+	}()
 
-	for _, file := range paths {
-		relPath := strings.Replace(file, basePath, "", 1)
-		cmdFilesRunFilesMap[file] = prependPath(runDirCleaned, strings.TrimPrefix(relPath, "/"))
-		fmt.Printf("%s:%s\n", file, cmdFilesRunFilesMap[file])
+	// get the absolute path to the command script in the run directory
+	shellScriptSource := getSubcommandShellFileAbsPath(cmdName)
+	runScript := imgFilesRunFilesMap[shellScriptSource]
+
+	// run the script
+	script := exec.Command(runScript)
+	err = script.Run()
+	if err != nil {
+		return err
 	}
 
 	return nil
+}
+
+func cleanupFiles(filesToRemove []string) {
+	for _, file := range filesToRemove {
+		err := os.Remove(file)
+		if err != nil {
+			fmt.Printf("unable to remove file: %s", file)
+			continue
+		}
+	}
+
+	return
+}
+
+// CopyFile copies a single file from src to dst
+func copyFile(src string, dst string) error {
+	// Open the source file
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer func(srcFile *os.File) {
+		err := srcFile.Close()
+		if err != nil {
+			fmt.Printf("could not close file %s", srcFile.Name())
+			return
+		}
+	}(srcFile)
+
+	// Create the destination file
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer func(dstFile *os.File) {
+		err := dstFile.Close()
+		if err != nil {
+			fmt.Printf("could not close file %s", srcFile.Name())
+		}
+	}(dstFile)
+
+	// Copy contents from source to destination
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		return err
+	}
+
+	// Ensure file permissions are copied
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, srcInfo.Mode())
+}
+
+func GetImgFilesToRunFilesMap(cmdName string, runDir string) (map[string]string, error) {
+	runDirPathCleaned := strings.TrimRight(runDir, "/")
+
+	paths, err := getCommandFiles(cmdName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	imgFilesRunFilesMap := make(map[string]string)
+	cmdImgDirPath := EefennCLIRoot + "/" + cmdName
+
+	for _, file := range paths {
+		imageRelPath := strings.Replace(file, cmdImgDirPath, "", 1)
+		imgFilesRunFilesMap[file] = prependPath(runDirPathCleaned, strings.TrimPrefix(imageRelPath, "/"))
+		fmt.Printf("%s:%s\n", file, imgFilesRunFilesMap[file])
+	}
+
+	return imgFilesRunFilesMap, nil
 }
 
 func prependPath(pathToPrepend string, pathToPrependTo string) string {

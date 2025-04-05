@@ -92,6 +92,18 @@ var treeCommand = &cobra.Command{
 	},
 }
 
+// command for listing all commands
+var runCommand = &cobra.Command{
+	Use:   "run",
+	Short: "Run a stored command.",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := cli.Run(commandName)
+		if err != nil {
+			fmt.Printf("Error running the command: %v\n", err)
+		}
+	},
+}
+
 func init() {
 	rmCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
 	err := rmCommand.MarkFlagRequired("name")
@@ -116,6 +128,12 @@ func init() {
 	if err != nil {
 		return
 	}
+
+	runCommand.Flags().StringVarP(&commandName, "name", "n", "", "User name (required)")
+	err = runCommand.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
 }
 
 func main() {
@@ -136,6 +154,8 @@ func main() {
 	rootCmd.AddCommand(lsCommand)
 
 	rootCmd.AddCommand(treeCommand)
+
+	rootCmd.AddCommand(runCommand)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
