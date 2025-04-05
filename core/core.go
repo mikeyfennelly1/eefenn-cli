@@ -172,23 +172,7 @@ func (c *Core) Commit(command cmd.Command) error {
 		return err
 	}
 	// Create the directory tree for the command
-	err = c.directoryTree.CreateCMDDirTree(command)
-	if err != nil {
-		return err
-	}
-	// Copy the script for the command from the pwd to the script
-	// in newly created directory tree.
-	err = c.directoryTree.CopyScriptToCMDDir(command)
-	if err != nil {
-		return err
-	}
-
-	err = c.directoryTree.CopyDependenciesToDependenciesDir(command)
-	if err != nil {
-		return err
-	}
-
-	err = edt.CreateCMDDirTree(command)
+	err = c.directoryTree.createCMDDir(command)
 	if err != nil {
 		return err
 	}

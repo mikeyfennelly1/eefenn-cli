@@ -8,10 +8,8 @@ package core
 
 import (
 	"fmt"
-	cmd_config "github.com/eefenn/eefenn-cli/cmd"
-	"io"
+	"github.com/eefenn/eefenn-cli/cmd"
 	"os"
-	"path/filepath"
 )
 
 const EefennCLIRoot = "/usr/lib/eefenn-cli"
@@ -31,7 +29,7 @@ type EefennCLIDirectoryTreeInterface interface {
 	// CreateCMDDirTree
 	//
 	// Create an entry in /usr/lib/eefenn-cli for the Subcommand.
-	CreateCMDDirTree(cmd cmd_config.Command) error
+	createCMDDir(command cmd.Command) error
 
 	// RemoveCommandDirectoryRecursively
 	//
@@ -41,49 +39,43 @@ type EefennCLIDirectoryTreeInterface interface {
 
 type eefennCLIDirectoryTree struct{}
 
-// CreateCMDDirTree
+// CreateCMDDir
 //
 // Create an entry in /usr/lib/eefenn-cli for the Subcommand
-func (edt *eefennCLIDirectoryTree) CreateCMDDirTree(cmd cmd_config.Command) error {
+func (edt *eefennCLIDirectoryTree) createCMDDir(command cmd.Command) error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("You must have root permissions to perform changes to CLI core\n")
 	}
 	// create the directory that contains dependencies and script for the command
-	cmdImageDir := getAbsImgDirPath(cmd.Name)
-
+	cmdImageDir := getAbsImgDirPath(command.Name)
 	err := os.MkdirAll(cmdImageDir, 0755)
 	if err != nil {
-		return fmt.Errorf("Could not create directory for this Subcommand: %v\n", err)
-	}
-
-	// create a blank command script
-	blankFile, err := edt.createEmptyShellScriptForCMD(cmd)
-	if err != nil {
-		return fmt.Errorf("Could not create empty Subcommand .sh file\n")
-	}
-
-	// write the contents of the command script to the persisted script
-	_, err = blankFile.Write([]byte("hello"))
-	if err != nil {
-		return fmt.Errorf("Failed to copy the contennts of the target shell script\n")
+		return fmt.Errorf("could not create directory for this command: %v\n", err)
 	}
 
 	return nil
 }
 
-// CreateEmptySubcommandShellFile
-//
-// Create an empty shell file of the name <command-hash>.sh
-func (edt *eefennCLIDirectoryTree) createEmptyShellScriptForCMD(cmd cmd_config.Command) (*os.File, error) {
-	fileName := getSubcommandShellFileAbsPath(cmd.Name)
+func (edt *eefennCLIDirectoryTree) CopyCommandFilesToCMDDir(command cmd.Command) error {
+	if os.Geteuid() != 0 {
+		return fmt.Errorf("You must have root permissions to perform changes to CLI core\n")
+	}
+	// create the directory that contains dependencies and script for the command
+	filesNeeded := command.GetCmdFilePaths()
 
-	// create the file
-	file, err := os.Create(fileName)
+	cmdDir := command.GetCmdDir()
+
+	pwd, err := os.Getwd()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return file, nil
+	err = copyFile(pwd, cmdDir)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // RemoveCommandDirectoryRecursively
@@ -98,68 +90,4 @@ func (edt *eefennCLIDirectoryTree) RemoveCommandDirectoryRecursively(commandName
 	}
 
 	return nil
-}
-
-// CopyScriptToCMDDir
-//
-// Move a shell script to its command's directory
-func (edt *eefennCLIDirectoryTree) CopyScriptToCMDDir(cmd cmd_config.Command) error {
-	sourceFile, err := os.OpenFile(cmd.Script, os.O_RDONLY, 0666)
-	if err != nil {
-		return err
-	}
-	defer sourceFile.Close()
-
-	destinationFile, err := edt.createEmptyShellScriptForCMD(cmd)
-	if err != nil {
-		return err
-	}
-	defer destinationFile.Close()
-
-	_, err = io.Copy(destinationFile, sourceFile)
-	if err != nil {
-		return err
-	}
-
-	return destinationFile.Sync() // Ensure all writes are flushed to disk
-}
-
-// CopyDependenciesToDependenciesDir
-//
-// Move a shell script to its command's directory
-func (edt *eefennCLIDirectoryTree) CopyDependenciesToDependenciesDir(cmd cmd_config.Command) error {
-	for _, dependency := range cmd.Dependencies {
-		err := edt.copyDependencyFileToDependencyDir(dependency, cmd)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (edt *eefennCLIDirectoryTree) copyDependencyFileToDependencyDir(dependencyPath string, cmd cmd_config.Command) error {
-	dependencyFile, err := os.OpenFile(dependencyPath, os.O_RDONLY, 0666)
-	if err != nil {
-		return err
-	}
-	defer dependencyFile.Close()
-
-	dependencyFileName := filepath.Base(dependencyPath)
-	cmdDepsDir := getCMDDependenciesDir(cmd.Name)
-	destinationFilePath := fmt.Sprintf("%s/%s", cmdDepsDir, dependencyFileName)
-
-	destinationFile, err := os.Create(destinationFilePath)
-	if err != nil {
-		return err
-	}
-	defer destinationFile.Close()
-
-	_, err = io.Copy(destinationFile, dependencyFile)
-	if err != nil {
-		return err
-	}
-
-	return destinationFile.Sync() // Ensure all writes are flushed to disk
-
 }
