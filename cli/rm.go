@@ -8,12 +8,7 @@ import (
 //
 // Remove a command by name
 func RM(commandName string) error {
-	currentCore, err := core.GetCore()
-	if err != nil {
-		return err
-	}
-
-	err = currentCore.RemoveCommandByName(commandName)
+	err := core.RemoveCommandByName(commandName)
 	if err != nil {
 		return err
 	}

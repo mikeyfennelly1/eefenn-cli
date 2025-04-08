@@ -8,12 +8,10 @@ import (
 )
 
 func Tree(commandName string) error {
-	c, err := core.GetCore()
+	_, pCMD, err := core.GetCommandByName(commandName)
 	if err != nil {
 		return err
 	}
-
-	pCMD, _ := c.GetCommandByName(commandName)
 	if pCMD == nil {
 		return fmt.Errorf("the command %s does not exist", commandName)
 	}

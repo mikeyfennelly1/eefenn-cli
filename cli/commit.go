@@ -15,12 +15,7 @@ func Commit() error {
 		return err
 	}
 
-	currentCore, err := core.GetCore()
-	if err != nil {
-		return err
-	}
-
-	err = currentCore.Commit(*pCMD)
+	err = core.Commit(*pCMD)
 	if err != nil {
 		return err
 	}
