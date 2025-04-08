@@ -120,8 +120,8 @@ func Run(cmdName string, runDir string) error {
 	}
 
 	// initialize a slice of absolute paths to keep track
-	// of the files we have copied from image directory for
-	// cleaning up
+	// of the files we have copied from image directory to pwd
+	// for cleaning up
 	var runFiles []string
 	// copy all files in the image to the run directory
 	for source, destination := range imgFilesRunFilesMap {
@@ -131,6 +131,9 @@ func Run(cmdName string, runDir string) error {
 			return err
 		}
 	}
+	defer func() {
+		cleanupFiles(runFiles)
+	}()
 
 	_, command, err := GetCommandByName(cmdName)
 	if err != nil {
@@ -141,10 +144,17 @@ func Run(cmdName string, runDir string) error {
 		return err
 	}
 	// get the absolute path to the command script in the run directory
-	runScript := fmt.Sprintf("%s/%s", pwd, command.Script)
+	runScript := fmt.Sprintf("%s/%s.sh", pwd, command.Name)
+
+	err = os.Chmod(runScript, 0755)
+	if err != nil {
+		return err
+	}
 
 	// run the script
 	script := exec.Command(runScript)
+	script.Stdout = os.Stdout
+	script.Stderr = os.Stderr
 	err = script.Run()
 	if err != nil {
 		return err
@@ -220,7 +230,6 @@ func getImgFilesToRunFilesMap(cmdName string, runDir string) (map[string]string,
 
 	for _, file := range paths {
 		imageRelPath := strings.Replace(file, cmdImgDirPath, "", 1)
-		fmt.Printf("%s\n", runDirPathCleaned)
 		imgFilesRunFilesMap[file] = prependPath(runDirPathCleaned, strings.TrimPrefix(imageRelPath, "/"))
 	}
 
@@ -228,8 +237,6 @@ func getImgFilesToRunFilesMap(cmdName string, runDir string) (map[string]string,
 }
 
 func prependPath(pathToPrepend string, pathToPrependTo string) string {
-	fmt.Printf("pathToPrepend: %s\n", pathToPrepend)
-	fmt.Printf("pathToPrependTo: %s\n", pathToPrependTo)
 	return pathToPrepend + "/" + pathToPrependTo
 }
 
