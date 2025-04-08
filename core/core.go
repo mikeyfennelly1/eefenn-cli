@@ -71,7 +71,7 @@ func CreateCommandInDir(commandName string, dirPath string) error {
 	var runFiles []string
 	// copy all files in the image to the run directory
 	for source, destination := range imgFilesRunFilesMap {
-		err := copyFile(source, destination)
+		err := CopyFile(source, destination)
 		runFiles = append(runFiles, destination)
 		if err != nil {
 			return err
@@ -125,7 +125,7 @@ func Run(cmdName string, runDir string) error {
 	var runFiles []string
 	// copy all files in the image to the run directory
 	for source, destination := range imgFilesRunFilesMap {
-		err := copyFile(source, destination)
+		err := CopyFile(source, destination)
 		runFiles = append(runFiles, destination)
 		if err != nil {
 			return err
@@ -176,7 +176,7 @@ func cleanupFiles(filesToRemove []string) {
 }
 
 // CopyFile copies a single file from src to dst
-func copyFile(src string, dst string) error {
+func CopyFile(src string, dst string) error {
 	// Open the source file
 	srcFile, err := os.Open(src)
 	if err != nil {
